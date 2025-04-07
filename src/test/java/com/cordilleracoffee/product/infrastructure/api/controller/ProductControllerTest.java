@@ -42,4 +42,19 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[0].url").value("https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test1.jpg"));
 
     }
+
+
+    @Test
+    void shouldReturnErrorWhenNoFilesProvided() throws Exception {
+
+        mockMvc.perform(post("/v1/products/images/upload-urls")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("""
+                                {
+                                   "files":[]
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("files: At least one file is required"));
+    }
 }
