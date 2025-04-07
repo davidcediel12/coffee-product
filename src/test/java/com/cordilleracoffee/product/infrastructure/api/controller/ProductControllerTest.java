@@ -2,6 +2,8 @@ package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -56,5 +58,28 @@ class ProductControllerTest {
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("files: At least one file is required"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"xml", "csv"})
+    void shouldReturnErrorWhenImageNameDoesNotEndWithValidExtension(String extension) throws Exception {
+
+        mockMvc.perform(post("/v1/products/images/upload-urls")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("files[0].imageName: Incorrect file type. Only .jpg and .png are allowed"));
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {"jpg", "png"})
+    void shouldReturnUrlsWhenImageNamEndWithValidExtension(String extension) throws Exception {
+
+        mockMvc.perform(post("/v1/products/images/upload-urls")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
+                .andExpect(status().isCreated());
     }
 }

@@ -1,4 +1,7 @@
 package com.cordilleracoffee.product.infrastructure.dto;
 
-public record ImageUrlRequest(String imageName) {
+import jakarta.validation.constraints.Pattern;
+
+public record ImageUrlRequest(@Pattern(regexp = "^[a-zA-Z0-9_\\-.]+\\.(png|jpg)$",
+        message = "Incorrect file type. Only .jpg and .png are allowed") String imageName) {
 }
