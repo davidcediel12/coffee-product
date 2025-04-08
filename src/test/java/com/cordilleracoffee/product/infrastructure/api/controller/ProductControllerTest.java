@@ -75,7 +75,7 @@ class ProductControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"jpg", "png"})
-    void shouldReturnUrlsWhenImageNamEndWithValidExtension(String extension) throws Exception {
+    void shouldAnswerImageNameEndWithValidExtension(String extension) throws Exception {
 
         mockMvc.perform(post("/v1/products/images/upload-urls")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
