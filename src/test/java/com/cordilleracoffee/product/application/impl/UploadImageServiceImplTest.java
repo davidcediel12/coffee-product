@@ -1,6 +1,5 @@
 package com.cordilleracoffee.product.application.impl;
 
-import com.cordilleracoffee.product.infrastructure.application.impl.UploadImageServiceImpl;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;

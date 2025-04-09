@@ -1,7 +1,7 @@
 package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
-import com.cordilleracoffee.product.infrastructure.application.UploadImageService;
+import com.cordilleracoffee.product.application.UploadImageService;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
 import jakarta.validation.Valid;

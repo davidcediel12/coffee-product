@@ -1,4 +1,4 @@
-package com.cordilleracoffee.product.infrastructure.application;
+package com.cordilleracoffee.product.application;
 
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
