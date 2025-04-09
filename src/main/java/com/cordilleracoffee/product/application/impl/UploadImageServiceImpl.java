@@ -14,6 +14,7 @@ import java.util.UUID;
 @Service
 public class UploadImageServiceImpl implements UploadImageService {
 
+    public static final String TEMP_FOLDER = "temp";
     private final FileStorageRepository fileStorageRepository;
 
     public UploadImageServiceImpl(FileStorageRepository fileStorageRepository) {
@@ -30,7 +31,7 @@ public class UploadImageServiceImpl implements UploadImageService {
 
             String blobName = UUID.randomUUID() + "_" + request.imageName();
 
-            String uploadUrl = fileStorageRepository.generateImageUploadUrl("temp", blobName, 2);
+            String uploadUrl = fileStorageRepository.generateImageUploadUrl(TEMP_FOLDER, blobName, 2);
 
             SignedUrl signedUrl = new SignedUrl(UUID.randomUUID().toString(), uploadUrl);
             signedUrls.add(signedUrl);
