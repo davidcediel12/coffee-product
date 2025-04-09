@@ -38,3 +38,4 @@ out/
 
 # Local properties
 application-dev.yaml
+application-azurite.yaml
