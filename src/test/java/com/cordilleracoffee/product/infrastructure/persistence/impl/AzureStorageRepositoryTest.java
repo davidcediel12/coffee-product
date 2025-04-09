@@ -82,4 +82,16 @@ class AzureStorageRepositoryTest {
         assertEquals("Folder and fileName cannot be empty", exception2.getMessage());
         verifyNoInteractions(blobClientFactory);
     }
+
+    @Test
+    void shouldNotGenerateUrlWhenTimeIsMoreThan60Minutes(){
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            azureStorageRepository.generateImageUploadUrl("images", "test.jpg", 61);
+        });
+
+        assertEquals("Expiration should be less or equal than 60 minutes", exception.getMessage());
+
+        verifyNoInteractions(blobClientFactory);
+    }
 }

@@ -45,5 +45,9 @@ public class AzureStorageRepository implements FileStorageRepository {
         if(expirationMinutes == null || expirationMinutes < 0) {
             throw new IllegalArgumentException("Expiration minutes must be a non-null positive number");
         }
+
+        if(expirationMinutes > 60){
+            throw new IllegalArgumentException("Expiration should be less or equal than 60 minutes");
+        }
     }
 }
