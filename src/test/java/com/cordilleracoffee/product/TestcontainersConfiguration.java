@@ -14,7 +14,8 @@ class TestcontainersConfiguration {
 	@Bean
 	@ServiceConnection(name = "azure-storage/azurite")
 	GenericContainer<?> azuriteContainer() {
-		return new GenericContainer<>(DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:latest")).withExposedPorts(10000, 10001, 10002);
+		return new GenericContainer<>(DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:latest"))
+				.withExposedPorts(10000, 10001, 10002);
 	}
 
 	@Bean
