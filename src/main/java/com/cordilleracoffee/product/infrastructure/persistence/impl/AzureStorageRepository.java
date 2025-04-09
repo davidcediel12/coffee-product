@@ -20,6 +20,8 @@ public class AzureStorageRepository implements FileStorageRepository {
 
     @Override
     public String generateImageUploadUrl(String folder, String fileName, Integer expirationMinutes) {
+
+        validateInputParameters(folder, fileName, expirationMinutes);
         BlobClient blobClient = blobClientFactory.createBlobClient(folder, fileName);
 
         OffsetDateTime expiryTime = OffsetDateTime.now()
@@ -32,5 +34,16 @@ public class AzureStorageRepository implements FileStorageRepository {
                 .setStartTime(OffsetDateTime.now());
 
         return blobClient.getBlobUrl() + "?" + blobClient.generateSas(sasSignatureValues);
+    }
+
+    private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {
+
+        if(folder == null || folder.isEmpty() || fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Folder and fileName cannot be empty");
+        }
+
+        if(expirationMinutes == null || expirationMinutes < 0) {
+            throw new IllegalArgumentException("Expiration minutes must be a non-null positive number");
+        }
     }
 }
