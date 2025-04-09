@@ -7,3 +7,5 @@ spring:
         blob:
           account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
           endpoint: ${AZURE_STORAGE_ACCOUNT_ENDPOINT}
+          container-temp: temp
+          container-product-assets: product-assets

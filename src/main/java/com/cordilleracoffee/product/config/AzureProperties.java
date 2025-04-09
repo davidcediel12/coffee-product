@@ -9,7 +9,24 @@ public class AzureProperties {
 
     private String connectionString;
     private String endpoint;
+    private String containerTemp;
+    private String containerProductAssets;
 
+    public String getContainerTemp() {
+        return containerTemp;
+    }
+
+    public void setContainerTemp(String containerTemp) {
+        this.containerTemp = containerTemp;
+    }
+
+    public String getContainerProductAssets() {
+        return containerProductAssets;
+    }
+
+    public void setContainerProductAssets(String containerProductAssets) {
+        this.containerProductAssets = containerProductAssets;
+    }
 
     public String getEndpoint() {
         return endpoint;
