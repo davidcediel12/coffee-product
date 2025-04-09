@@ -1,3 +1,9 @@
 spring:
   application:
     name: product
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+          endpoint: ${AZURE_STORAGE_ACCOUNT_ENDPOINT}
