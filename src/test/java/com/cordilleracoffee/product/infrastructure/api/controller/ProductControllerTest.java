@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -100,5 +101,16 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
                 .andExpect(status().isCreated());
+    }
+
+
+    @Test
+    void shouldRejectImageNameWithSubfolders() throws Exception {
+        mockMvc.perform(post("/v1/products/images/upload-urls")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("{\"files\":[ {\"imageName\":\"../../../evil.png\"}]}"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(uploadImageService);
     }
 }
