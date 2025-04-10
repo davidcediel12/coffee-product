@@ -2,6 +2,7 @@ package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
 import com.cordilleracoffee.product.application.UploadImageService;
+import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
 import jakarta.validation.Valid;
@@ -23,7 +24,8 @@ class ProductController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/images/upload-urls")
-    List<SignedUrl> getUploadUrls(@RequestBody @Valid ImageUrlRequests imageUrlRequests) {
-        return uploadImageService.getSignedUrls(imageUrlRequests, List.of());
+    List<SignedUrl> getUploadUrls(@RequestBody @Valid ImageUrlRequests imageUrlRequests,
+                                  @RequestHeader("App-User-Roles") List<UserRole> userRoles) {
+        return uploadImageService.getSignedUrls(imageUrlRequests, userRoles);
     }
 }

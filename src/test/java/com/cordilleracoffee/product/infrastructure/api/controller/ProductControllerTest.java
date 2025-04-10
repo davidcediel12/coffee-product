@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.List;
 
@@ -41,8 +42,7 @@ class ProductControllerTest {
                 new SignedUrl("26", "https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test2.jpg")
         ));
 
-        mockMvc.perform(post("/v1/products/images/upload-urls")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(uploadUrlFromSeller()
                         .content("""
                                 {
                                    "files":[
@@ -66,8 +66,7 @@ class ProductControllerTest {
     @Test
     void shouldReturnErrorWhenNoFilesProvided() throws Exception {
 
-        mockMvc.perform(post("/v1/products/images/upload-urls")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(uploadUrlFromSeller()
                         .content("""
                                 {
                                    "files":[]
@@ -81,8 +80,7 @@ class ProductControllerTest {
     @ValueSource(strings = {"xml", "csv"})
     void shouldReturnErrorWhenImageNameDoesNotEndWithValidExtension(String extension) throws Exception {
 
-        mockMvc.perform(post("/v1/products/images/upload-urls")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(uploadUrlFromSeller()
                 .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
@@ -98,8 +96,7 @@ class ProductControllerTest {
                 new SignedUrl("25", "https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test1.jpg")
         ));
 
-        mockMvc.perform(post("/v1/products/images/upload-urls")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(uploadUrlFromSeller()
                         .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
                 .andExpect(status().isCreated());
     }
@@ -107,11 +104,25 @@ class ProductControllerTest {
 
     @Test
     void shouldRejectImageNameWithSubfolders() throws Exception {
-        mockMvc.perform(post("/v1/products/images/upload-urls")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(uploadUrlFromSeller()
                         .content("{\"files\":[ {\"imageName\":\"../../../evil.png\"}]}"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(uploadImageService);
+    }
+
+    @Test
+    void shouldReturnErrorWhenUserRolesAreNotProvided() throws Exception {
+        mockMvc.perform(post("/v1/products/images/upload-urls")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("{\"files\":[ {\"imageName\":\"someImage.png\"}]}"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    private static MockHttpServletRequestBuilder uploadUrlFromSeller(){
+        return post("/v1/products/images/upload-urls")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("App-User-Roles", "SELLER");
     }
 }
