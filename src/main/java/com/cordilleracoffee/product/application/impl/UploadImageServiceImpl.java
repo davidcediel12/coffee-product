@@ -1,6 +1,8 @@
 package com.cordilleracoffee.product.application.impl;
 
 import com.cordilleracoffee.product.application.UploadImageService;
+import com.cordilleracoffee.product.application.exception.UnauthorizedUserException;
+import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
@@ -23,7 +25,11 @@ public class UploadImageServiceImpl implements UploadImageService {
 
 
     @Override
-    public List<SignedUrl> getSignedUrls(ImageUrlRequests urlRequests) {
+    public List<SignedUrl> getSignedUrls(ImageUrlRequests urlRequests, List<UserRole> userRoles) {
+
+        if(!userRoles.contains(UserRole.SELLER)){
+            throw new UnauthorizedUserException("User must be seller to request url to upload images");
+        }
 
         List<SignedUrl> signedUrls = new ArrayList<>();
 

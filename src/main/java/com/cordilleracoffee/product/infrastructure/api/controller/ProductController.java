@@ -24,6 +24,6 @@ class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/images/upload-urls")
     List<SignedUrl> getUploadUrls(@RequestBody @Valid ImageUrlRequests imageUrlRequests) {
-        return uploadImageService.getSignedUrls(imageUrlRequests);
+        return uploadImageService.getSignedUrls(imageUrlRequests, List.of());
     }
 }

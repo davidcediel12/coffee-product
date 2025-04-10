@@ -6,6 +6,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobItem;
 import com.cordilleracoffee.product.application.UploadImageService;
+import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
@@ -70,7 +71,7 @@ class UploadImageServiceImplIT {
     void shouldGenerateImage() {
 
         List<SignedUrl> signedUrls = uploadImageService.getSignedUrls(new ImageUrlRequests(List.of(
-                new ImageUrlRequest("image1.png"))));
+                new ImageUrlRequest("image1.png"))),  List.of(UserRole.SELLER));
 
         assertThat(signedUrls).hasSize(1);
     }
@@ -80,7 +81,7 @@ class UploadImageServiceImplIT {
     void generatedUrlShouldBeValidToUpload() throws IOException {
 
         List<SignedUrl> signedUrls = uploadImageService.getSignedUrls(new ImageUrlRequests(List.of(
-                new ImageUrlRequest("image1.png"))));
+                new ImageUrlRequest("image1.png"))),  List.of(UserRole.SELLER));
 
         assertThat(signedUrls).hasSize(1);
 
