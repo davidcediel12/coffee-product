@@ -4,7 +4,7 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
-import com.cordilleracoffee.product.infrastructure.persistence.FileStorageRepository;
+import com.cordilleracoffee.product.application.FileStorageRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;

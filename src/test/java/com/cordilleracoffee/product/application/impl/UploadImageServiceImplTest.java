@@ -5,7 +5,7 @@ import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
-import com.cordilleracoffee.product.infrastructure.persistence.FileStorageRepository;
+import com.cordilleracoffee.product.application.FileStorageRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
