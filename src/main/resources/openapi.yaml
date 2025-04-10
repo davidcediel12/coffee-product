@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: Product Management Command
+  description: |-
+    
+    Specification of the Product Management Command, used to manage the whole lifecycle of product, variations, tags, and categories.
+  contact:
+    email: david.cediel@alumnos.upm.es
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.0
+servers:
+  - url: https://localhost:8080/v1/products
+    description: Local development
+tags:
+  - name: Product
+    description: Tag used to manage Product
+  - name: Image
+    description: Tag to manage product images
+paths:
+  /images/upload-urls:
+    post:
+      tags:
+        - Image
+      summary: Generate signed url to upload images
+      description:
+        It generates one url to upload to the storage service for each given file name.
+      operationId: uploadImageUrls
+      requestBody:
+        description: Create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageUrlRequests'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SignedUrl"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  responses:
+    BadRequest:
+      description: The information is not correct
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Unauthenticated, unable to perform the operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Forbidden:
+      description: Not enough privileges to perform the operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    SignedUrl:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 11963ba6-2ec2-43c0-a68e-b0f52812dba2
+          description: Id of the image that can be used to validate the upload later
+        name:
+          type: string
+          description: The same file name used in the request
+          example: image1.png
+        url:
+          type: string
+          format: url
+          example: https://storage.blob.core.windows.net/temp/58b3b662-caa6-4af9-8b63-dcd24ecdc611_123.png?sv=2025-01-05&st=2025-04-10T08%3A54%3A19Z&se=2025-04-10T08%3A56%3A19Z&sr=b&sp=w&sig=LKLkEF%2BTcHMJinuXSSWuY36KCwpe%2Bt%2BxZ%2BUKBsTsuP0%3D
+
+
+    ImageUrlRequests:
+      type: object
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/ImageUrlRequest"
+
+    ImageUrlRequest:
+      type: object
+      required:
+        - imageName
+      properties:
+        imageName:
+          type: string
+          pattern: ^[a-zA-Z0-9_\-.]+\.(png|jpg)$
+          example: image1.png
+          description: image name to upload
+    ErrorResponse:
+      required:
+        - developerMessage
+        - errorCode
+        - userMessage
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: 2025-04-10T10:51:15.7047861
+        error:
+          type: string
+          description: Code that identify the error
+          example: "PRD-VA-01"
+        message:
+          maxLength: 256
+          pattern: "^[a-zA-Z\\s]*$"
+          type: string
+          example: Error saving the user
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
