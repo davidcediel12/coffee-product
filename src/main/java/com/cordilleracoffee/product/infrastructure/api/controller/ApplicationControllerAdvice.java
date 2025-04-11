@@ -3,8 +3,10 @@ package com.cordilleracoffee.product.infrastructure.api.controller;
 import com.cordilleracoffee.product.infrastructure.dto.ApiErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,25 @@ public class ApplicationControllerAdvice {
 
         return ResponseEntity.badRequest()
                 .body(new ApiErrorResponse(LocalDateTime.now(), "PRD-VA-01", errors,
+                        ServletUriComponentsBuilder.fromCurrentRequest().toUriString()));
+    }
+
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        String error = ex.getName() + " cannot be parsed properly";
+
+        return ResponseEntity.badRequest()
+                .body(new ApiErrorResponse(LocalDateTime.now(), "PRD-VA-02", error,
+                        ServletUriComponentsBuilder.fromCurrentRequest().toUriString()));
+    }
+
+
+    @ExceptionHandler(MissingRequestValueException.class)
+    ResponseEntity<ApiErrorResponse> handleMissingRequestValueException(MissingRequestValueException ex) {
+
+        return ResponseEntity.badRequest()
+                .body(new ApiErrorResponse(LocalDateTime.now(), "PRD-VA-03", ex.getMessage(),
                         ServletUriComponentsBuilder.fromCurrentRequest().toUriString()));
     }
 }

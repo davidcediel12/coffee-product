@@ -129,11 +129,13 @@ class ProductControllerTest {
 
     @Test
     void shouldReturnErrorWhenUserIdNotProvided() throws Exception {
+
         mockMvc.perform(post("/v1/products/images/upload-urls")
                         .header("App-User-Roles", "SELLER")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content("{\"files\":[ {\"imageName\":\"someImage.png\"}]}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Required request header 'App-User-ID' for method parameter type String is not present"));
     }
 
 
