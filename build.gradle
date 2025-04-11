@@ -56,6 +56,7 @@ dependencies {
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'com.redis:testcontainers-redis:2.2.2'
 	testImplementation 'com.azure.spring:spring-cloud-azure-testcontainers'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.testcontainers:junit-jupiter'

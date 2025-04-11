@@ -10,6 +10,8 @@ import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
+import com.cordilleracoffee.product.infrastructure.persistence.entity.TempImage;
+import com.redis.testcontainers.RedisContainer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -28,6 +31,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,11 +45,17 @@ class UploadImageServiceImplIT {
             DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:latest"))
             .withExposedPorts(10000, 10001, 10002);
 
+    @Container
+    static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7-alpine"));
+
     @Autowired
     UploadImageService uploadImageService;
 
     @Autowired
     private BlobServiceClient blobServiceClient;
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @DynamicPropertySource
     static void setAzureStorageProperties(DynamicPropertyRegistry registry) {
@@ -55,6 +65,9 @@ class UploadImageServiceImplIT {
                 "BlobEndpoint=http://127.0.0.1:%d/devstoreaccount1;", AZURITE_CONTAINER.getMappedPort(10000));
 
         registry.add("spring.cloud.azure.storage.blob.connection-string", () -> connectionString);
+
+        registry.add("spring.data.redis.host", redis::getRedisHost);
+        registry.add("spring.data.redis.port", redis::getRedisPort);
     }
 
 
@@ -95,6 +108,43 @@ class UploadImageServiceImplIT {
         BlobItem blob = verifySingleBlobExists("temp");
 
         assertThat(url).contains(blob.getName());
+    }
+
+
+    @Test
+    void shouldSaveTemporalImageDetailsInCache() {
+
+        String userId = "user-123";
+        String imageName = "image1.png";
+
+        List<SignedUrl> signedUrls = uploadImageService.getSignedUrls(
+                new ImageUrlRequests(List.of(
+                        new ImageUrlRequest(imageName))), userId, List.of(UserRole.SELLER));
+
+        assertThat(signedUrls).hasSize(1);
+
+        String url = signedUrls.getFirst().url();
+        assertThat(url).isNotBlank();
+
+        String hashKey = "temporalImages:" + userId;
+
+        assertThat(redisTemplate.hasKey(hashKey)).isTrue();
+
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(hashKey);
+
+        assertThat(entries).hasSize(1);
+
+        Object tempImage = entries.entrySet().stream()
+                .findFirst()
+                .orElseThrow()
+                .getValue();
+
+        assertThat(tempImage).isInstanceOf(TempImage.class);
+
+        TempImage image = (TempImage) tempImage;
+
+        assertThat(image.name()).contains(imageName);
+        assertThat(image.userId()).isEqualTo(userId);
     }
 
     private BlobItem verifySingleBlobExists(String containerName) {
