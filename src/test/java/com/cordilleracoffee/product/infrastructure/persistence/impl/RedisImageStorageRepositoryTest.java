@@ -8,8 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.Duration;
 
@@ -30,18 +30,20 @@ class RedisImageStorageRepositoryTest {
     @Test
     void shouldSaveImage() {
 
-        ValueOperations<String, TempImage> valueOperations = Mockito.mock(ValueOperations.class);
-
-        when(tempImageTemplate.opsForValue()).thenReturn(valueOperations);
-
-        doNothing().when(valueOperations).set(anyString(), any(), any(Duration.class));
+        HashOperations<String, Object, Object> hashOperations = Mockito.mock(HashOperations.class);
 
         TemporalImage image = new TemporalImage("212", "2nn2.png", "http://123.com", "292902-190292");
+
+
+        when(tempImageTemplate.opsForHash()).thenReturn(hashOperations);
+
+        doNothing().when(hashOperations).put(anyString(), eq(image.id()), any(TempImage.class));
         assertDoesNotThrow(() -> redisImageRepository.save(image));
 
 
-        verify(tempImageTemplate).opsForValue();
-        verify(valueOperations).set(anyString(), any(), any(Duration.class));
+        verify(tempImageTemplate).opsForHash();
+        verify(hashOperations).put(anyString(), anyString(), any());
+        verify(tempImageTemplate).expire(anyString(), any(Duration.class));
 
 
     }
