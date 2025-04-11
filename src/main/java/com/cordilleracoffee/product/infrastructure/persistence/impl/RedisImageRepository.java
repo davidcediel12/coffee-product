@@ -2,17 +2,21 @@ package com.cordilleracoffee.product.infrastructure.persistence.impl;
 
 import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
-import com.cordilleracoffee.product.infrastructure.persistence.TempImageRepository;
 import com.cordilleracoffee.product.infrastructure.persistence.entity.TempImage;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.time.Duration;
 
 @Repository
 public class RedisImageRepository implements ImageRepository {
 
-    private final TempImageRepository tempImageRepository;
+    private static final long EXPIRATION_TIME_MINUTES = 5L;
 
-    public RedisImageRepository(TempImageRepository tempImageRepository) {
-        this.tempImageRepository = tempImageRepository;
+    private final RedisTemplate<String, TempImage> redisTemplate;
+
+    public RedisImageRepository(RedisTemplate<String, TempImage> redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -24,6 +28,8 @@ public class RedisImageRepository implements ImageRepository {
         tempImage.setUrl(temporalImage.url());
         tempImage.setUserId(temporalImage.userId());
 
-        tempImageRepository.save(tempImage);
+        String temporalImageKey = "temporalImage:" + temporalImage.id();
+
+        redisTemplate.opsForValue().set(temporalImageKey, tempImage, Duration.ofMinutes(EXPIRATION_TIME_MINUTES));
     }
 }

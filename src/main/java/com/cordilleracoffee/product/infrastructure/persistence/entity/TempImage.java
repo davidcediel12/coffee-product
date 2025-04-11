@@ -1,14 +1,11 @@
 package com.cordilleracoffee.product.infrastructure.persistence.entity;
 
 
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.redis.core.RedisHash;
 
-@RedisHash(timeToLive = 300)
-public class TempImage {
+import java.io.Serializable;
 
-    @Id
+public class TempImage implements Serializable {
     private String id;
 
     @NotNull
