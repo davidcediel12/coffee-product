@@ -32,6 +32,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,6 +79,8 @@ class UploadImageServiceImplIT {
         tempContainer.listBlobs()
                 .forEach(blobItem -> tempContainer.getBlobClient(blobItem.getName())
                         .delete());
+
+        Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection().serverCommands().flushDb();
     }
 
     @Test
