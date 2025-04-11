@@ -28,19 +28,31 @@ ext {
 }
 
 dependencies {
+
+	// Utilities
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Cloud
 	implementation 'com.azure.spring:spring-cloud-azure-starter-actuator'
 	implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
+
+	// Messaging
 	implementation 'org.springframework.kafka:spring-kafka'
+
+	// Persistence
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.h2database:h2'
-	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Docker
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	developmentOnly 'com.azure.spring:spring-cloud-azure-docker-compose'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
+
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testImplementation 'com.azure.spring:spring-cloud-azure-testcontainers'
@@ -48,7 +60,6 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:kafka'
 	testImplementation 'org.testcontainers:postgresql'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
