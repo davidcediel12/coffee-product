@@ -2,7 +2,11 @@ package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
 import com.cordilleracoffee.product.application.UploadImageService;
+import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
+import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -29,6 +33,9 @@ class ProductControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @MockitoBean
     UploadImageService uploadImageService;
@@ -81,7 +88,7 @@ class ProductControllerTest {
     void shouldReturnErrorWhenImageNameDoesNotEndWithValidExtension(String extension) throws Exception {
 
         mockMvc.perform(uploadUrlFromSeller()
-                .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
+                        .content("{\"files\":[ {\"imageName\":\"test1." + extension + "\"}]}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
                         .value("files[0].imageName: Incorrect file type. Only .jpg and .png are allowed"));
@@ -120,7 +127,38 @@ class ProductControllerTest {
     }
 
 
-    private static MockHttpServletRequestBuilder uploadUrlFromSeller(){
+    @Test
+    void shouldReturnErrorWhenUploadMoreThanTenImages() throws Exception {
+
+
+        mockMvc.perform(uploadUrlFromSeller()
+                .content(toJsoString(new ImageUrlRequests(List.of(
+                        new ImageUrlRequest("img1.png"),
+                        new ImageUrlRequest("img2.png"),
+                        new ImageUrlRequest("img3.png"),
+                        new ImageUrlRequest("img4.png"),
+                        new ImageUrlRequest("img5.png"),
+                        new ImageUrlRequest("img6.png"),
+                        new ImageUrlRequest("img7.png"),
+                        new ImageUrlRequest("img8.png"),
+                        new ImageUrlRequest("img9.png"),
+                        new ImageUrlRequest("img10.png"),
+                        new ImageUrlRequest("img11.png")
+                )))))
+                .andExpect(status().isBadRequest());
+
+    }
+
+
+    private String toJsoString(Object o) {
+        try {
+            return objectMapper.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static MockHttpServletRequestBuilder uploadUrlFromSeller() {
         return post("/v1/products/images/upload-urls")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("App-User-Roles", "SELLER");
