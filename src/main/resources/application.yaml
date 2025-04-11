@@ -10,3 +10,8 @@ spring:
           connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
           container-temp: temp
           container-product-assets: product-assets
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
