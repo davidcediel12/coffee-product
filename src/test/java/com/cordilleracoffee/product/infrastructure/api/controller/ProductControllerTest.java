@@ -98,7 +98,7 @@ class ProductControllerTest {
     @ValueSource(strings = {"jpg", "png"})
     void shouldAnswerImageNameEndWithValidExtension(String extension) throws Exception {
 
-        when(uploadImageService.getSignedUrls(any(),  anyString(), anyList())).thenReturn(List.of(
+        when(uploadImageService.getSignedUrls(any(), anyString(), anyList())).thenReturn(List.of(
                 new SignedUrl("25", "https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test1.jpg")
         ));
 
@@ -120,6 +120,17 @@ class ProductControllerTest {
     @Test
     void shouldReturnErrorWhenUserRolesAreNotProvided() throws Exception {
         mockMvc.perform(post("/v1/products/images/upload-urls")
+                        .header("App-User-ID", "user-123")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content("{\"files\":[ {\"imageName\":\"someImage.png\"}]}"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenUserIdNotProvided() throws Exception {
+        mockMvc.perform(post("/v1/products/images/upload-urls")
+                        .header("App-User-Roles", "SELLER")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content("{\"files\":[ {\"imageName\":\"someImage.png\"}]}"))
                 .andExpect(status().isBadRequest());
@@ -131,19 +142,19 @@ class ProductControllerTest {
 
 
         mockMvc.perform(uploadUrlFromSeller()
-                .content(toJsoString(new ImageUrlRequests(List.of(
-                        new ImageUrlRequest("img1.png"),
-                        new ImageUrlRequest("img2.png"),
-                        new ImageUrlRequest("img3.png"),
-                        new ImageUrlRequest("img4.png"),
-                        new ImageUrlRequest("img5.png"),
-                        new ImageUrlRequest("img6.png"),
-                        new ImageUrlRequest("img7.png"),
-                        new ImageUrlRequest("img8.png"),
-                        new ImageUrlRequest("img9.png"),
-                        new ImageUrlRequest("img10.png"),
-                        new ImageUrlRequest("img11.png")
-                )))))
+                        .content(toJsoString(new ImageUrlRequests(List.of(
+                                new ImageUrlRequest("img1.png"),
+                                new ImageUrlRequest("img2.png"),
+                                new ImageUrlRequest("img3.png"),
+                                new ImageUrlRequest("img4.png"),
+                                new ImageUrlRequest("img5.png"),
+                                new ImageUrlRequest("img6.png"),
+                                new ImageUrlRequest("img7.png"),
+                                new ImageUrlRequest("img8.png"),
+                                new ImageUrlRequest("img9.png"),
+                                new ImageUrlRequest("img10.png"),
+                                new ImageUrlRequest("img11.png")
+                        )))))
                 .andExpect(status().isBadRequest());
 
     }
@@ -160,6 +171,7 @@ class ProductControllerTest {
     private static MockHttpServletRequestBuilder uploadUrlFromSeller() {
         return post("/v1/products/images/upload-urls")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("App-User-ID", "user-123")
                 .header("App-User-Roles", "SELLER");
     }
 }
