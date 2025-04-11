@@ -71,7 +71,7 @@ class UploadImageServiceImplIT {
     void shouldGenerateImage() {
 
         List<SignedUrl> signedUrls = uploadImageService.getSignedUrls(new ImageUrlRequests(List.of(
-                new ImageUrlRequest("image1.png"))),  List.of(UserRole.SELLER));
+                new ImageUrlRequest("image1.png"))), "user-123", List.of(UserRole.SELLER));
 
         assertThat(signedUrls).hasSize(1);
     }
@@ -81,7 +81,7 @@ class UploadImageServiceImplIT {
     void generatedUrlShouldBeValidToUpload() throws IOException {
 
         List<SignedUrl> signedUrls = uploadImageService.getSignedUrls(new ImageUrlRequests(List.of(
-                new ImageUrlRequest("image1.png"))),  List.of(UserRole.SELLER));
+                new ImageUrlRequest("image1.png"))), "user-123", List.of(UserRole.SELLER));
 
         assertThat(signedUrls).hasSize(1);
 

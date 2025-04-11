@@ -4,7 +4,9 @@ import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.UploadImageService;
 import com.cordilleracoffee.product.application.annotation.UseCase;
 import com.cordilleracoffee.product.application.exception.UnauthorizedUserException;
+import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.model.UserRole;
+import com.cordilleracoffee.product.domain.repository.ImageRepository;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
@@ -17,15 +19,19 @@ import java.util.UUID;
 public class UploadImageServiceImpl implements UploadImageService {
 
     public static final String TEMP_FOLDER = "temp";
-    private final FileStorageRepository fileStorageRepository;
 
-    public UploadImageServiceImpl(FileStorageRepository fileStorageRepository) {
+    private final FileStorageRepository fileStorageRepository;
+    private final ImageRepository imageRepository;
+
+    public UploadImageServiceImpl(FileStorageRepository fileStorageRepository, ImageRepository imageRepository) {
         this.fileStorageRepository = fileStorageRepository;
+        this.imageRepository = imageRepository;
     }
 
 
     @Override
-    public List<SignedUrl> getSignedUrls(ImageUrlRequests urlRequests, List<UserRole> userRoles) {
+    public List<SignedUrl> getSignedUrls(
+            ImageUrlRequests urlRequests, String userId, List<UserRole> userRoles) {
 
         if (!userRoles.contains(UserRole.SELLER)) {
             throw new UnauthorizedUserException("User must be seller to request url to upload images");
@@ -39,8 +45,13 @@ public class UploadImageServiceImpl implements UploadImageService {
 
             String uploadUrl = fileStorageRepository.generateImageUploadUrl(TEMP_FOLDER, blobName, 2);
 
-            SignedUrl signedUrl = new SignedUrl(UUID.randomUUID().toString(), uploadUrl);
+            String temporalImageId = UUID.randomUUID().toString();
+
+            SignedUrl signedUrl = new SignedUrl(temporalImageId, uploadUrl);
             signedUrls.add(signedUrl);
+
+            imageRepository.save(new TemporalImage(temporalImageId, blobName, uploadUrl, userId));
+
         }
 
 

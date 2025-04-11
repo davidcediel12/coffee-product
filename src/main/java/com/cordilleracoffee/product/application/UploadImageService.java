@@ -7,5 +7,5 @@ import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
 import java.util.List;
 
 public interface UploadImageService {
-    List<SignedUrl> getSignedUrls(ImageUrlRequests urlRequests, List<UserRole> userRoles);
+    List<SignedUrl> getSignedUrls(ImageUrlRequests urlRequests, String userId, List<UserRole> userRoles);
 }

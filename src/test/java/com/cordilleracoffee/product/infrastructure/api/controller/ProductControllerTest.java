@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,7 +43,7 @@ class ProductControllerTest {
     @Test
     void shouldReturnUploadUrls() throws Exception {
 
-        when(uploadImageService.getSignedUrls(any(), anyList())).thenReturn(List.of(
+        when(uploadImageService.getSignedUrls(any(), anyString(), anyList())).thenReturn(List.of(
                 new SignedUrl("25", "https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test1.jpg"),
                 new SignedUrl("26", "https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test2.jpg")
         ));
@@ -99,7 +98,7 @@ class ProductControllerTest {
     @ValueSource(strings = {"jpg", "png"})
     void shouldAnswerImageNameEndWithValidExtension(String extension) throws Exception {
 
-        when(uploadImageService.getSignedUrls(any(), anyList())).thenReturn(List.of(
+        when(uploadImageService.getSignedUrls(any(),  anyString(), anyList())).thenReturn(List.of(
                 new SignedUrl("25", "https://cordilleracoffee.blob.core.windows.net/cordilleracoffee/test1.jpg")
         ));
 

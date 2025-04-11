@@ -26,6 +26,6 @@ class ProductController {
     @PostMapping("/images/upload-urls")
     List<SignedUrl> getUploadUrls(@RequestBody @Valid ImageUrlRequests imageUrlRequests,
                                   @RequestHeader("App-User-Roles") List<UserRole> userRoles) {
-        return uploadImageService.getSignedUrls(imageUrlRequests, userRoles);
+        return uploadImageService.getSignedUrls(imageUrlRequests, "123", userRoles);
     }
 }
