@@ -1,6 +1,8 @@
 package com.cordilleracoffee.product.infrastructure.api.controller;
 
+import com.cordilleracoffee.product.application.exception.UnauthorizedUserException;
 import com.cordilleracoffee.product.infrastructure.dto.ApiErrorResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestValueException;
@@ -46,5 +48,12 @@ public class ApplicationControllerAdvice {
         return ResponseEntity.badRequest()
                 .body(new ApiErrorResponse(LocalDateTime.now(), "PRD-VA-03", ex.getMessage(),
                         ServletUriComponentsBuilder.fromCurrentRequest().toUriString()));
+    }
+
+    @ExceptionHandler(UnauthorizedUserException.class)
+    ResponseEntity<ApiErrorResponse> handleUnauthorizedUserException(UnauthorizedUserException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiErrorResponse(LocalDateTime.now(), "PRD-VA-04", ex.getMessage(),
+                        ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString()));
     }
 }

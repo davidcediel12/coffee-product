@@ -5,6 +5,7 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobItem;
+import com.cordilleracoffee.product.infrastructure.dto.ApiErrorResponse;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @Testcontainers
 class UploadImageE2ETest {
 
+    private static final String SELLER_ROLE = "SELLER";
     @Autowired
     TestRestTemplate testRestTemplate;
 
@@ -84,6 +86,27 @@ class UploadImageE2ETest {
     }
 
     @Test
+    void shouldNotSaveImageWhenUserIsNotSeller() {
+
+        ImageUrlRequests imageUrlRequests = new ImageUrlRequests(
+                List.of(
+                        new ImageUrlRequest("file1.png")
+                )
+        );
+
+        ResponseEntity<ApiErrorResponse> response = callUploadUrlsError(imageUrlRequests, "CUSTOMER", "user123");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
+        assertThat(redisTemplate.keys("temporalImages:*")).isEmpty();
+        assertTempStorageContainerIsEmpty();
+    }
+
+    private void assertTempStorageContainerIsEmpty() {
+        assertThat(blobServiceClient.getBlobContainerClient("temp").listBlobs()).isEmpty();
+    }
+
+    @Test
     void shouldReturnValidSignedUrl() throws IOException {
 
         String userId = "user-123";
@@ -95,7 +118,7 @@ class UploadImageE2ETest {
         );
 
 
-        ResponseEntity<List<SignedUrl>> response = callUploadUrls(imageUrlRequests, userId);
+        ResponseEntity<List<SignedUrl>> response = callUploadUrls(imageUrlRequests, SELLER_ROLE, userId);
 
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -149,22 +172,39 @@ class UploadImageE2ETest {
         assertThat(downloadedImage).isEqualTo(originalImage);
     }
 
-    private ResponseEntity<List<SignedUrl>> callUploadUrls(ImageUrlRequests imageUrlRequests, String userId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("App-User-Roles", "SELLER");
-        headers.add("App-User-ID", userId);
+    private ResponseEntity<List<SignedUrl>> callUploadUrls(ImageUrlRequests imageUrlRequests,
+                                                           String userRole,
+                                                           String userId) {
 
-
-        RequestEntity<ImageUrlRequests> request = RequestEntity
-                .post(URI.create("/v1/products/images/upload-urls"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .headers(headers)
-                .body(imageUrlRequests);
+        RequestEntity<ImageUrlRequests> request = createUploadRequest(imageUrlRequests, userRole, userId);
 
         var typeRef = new ParameterizedTypeReference<List<SignedUrl>>() {
         };
         return testRestTemplate.exchange(request, typeRef);
     }
+
+
+    private ResponseEntity<ApiErrorResponse> callUploadUrlsError(ImageUrlRequests imageUrlRequests,
+                                                                 String userRole,
+                                                                 String userId) {
+        RequestEntity<ImageUrlRequests> request = createUploadRequest(imageUrlRequests, userRole, userId);
+
+        return testRestTemplate.exchange(request, ApiErrorResponse.class);
+    }
+
+    private static @NotNull RequestEntity<ImageUrlRequests> createUploadRequest(ImageUrlRequests imageUrlRequests, String userRole, String userId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("App-User-Roles", userRole);
+        headers.add("App-User-ID", userId);
+
+
+        return RequestEntity
+                .post(URI.create("/v1/products/images/upload-urls"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .body(imageUrlRequests);
+    }
+
 
     private static @NotNull ResponseEntity<Void> uploadFileToAzure(String url, byte[] originalImage) {
 
