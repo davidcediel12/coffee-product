@@ -24,7 +24,7 @@ public record CreateProductRequest(
         String sku,
 
         @Min(0)
-        int stock,
+        Integer stock,
 
         @NotNull
         ProductStatus status,
