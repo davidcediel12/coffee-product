@@ -147,11 +147,18 @@ components:
         tags:
           type: array
           items:
-            type: number
-            format: int32
-            example: 20
-          example: [10, 20, 30]
-          description: Tags that will be associated with the product.
+            $ref: "#/components/schemas/Tag"
+    Tag:
+      type: object
+      description: Tag that will be associated with the product.
+      required:
+        - id
+      properties:
+        id:
+          type: number
+          format: int32
+          nullable: false
+          example: 20
     Category:
       type: object
       description: Category to which the product belongs
