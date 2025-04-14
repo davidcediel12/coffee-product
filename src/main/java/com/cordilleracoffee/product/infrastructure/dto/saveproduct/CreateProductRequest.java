@@ -1,5 +1,6 @@
 package com.cordilleracoffee.product.infrastructure.dto.saveproduct;
 
+import com.cordilleracoffee.product.domain.model.ProductStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
