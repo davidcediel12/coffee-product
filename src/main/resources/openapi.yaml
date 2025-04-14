@@ -112,11 +112,9 @@ components:
           type: string
           example: Grinded coffe beans in a black package with the image of the farm
           description: product description
-        categoryId:
-          type: number
-          format: int32
-          example: 5
-          description: Category ID to which the product belongs
+        category:
+          $ref: "#/components/schemas/Category"
+
         sku:
           type: string
           example: CAF-MR
@@ -149,13 +147,22 @@ components:
         tags:
           type: array
           items:
-            schema:
-              type: number
-              format: int32
-              example: 20
+            type: number
+            format: int32
+            example: 20
           example: [10, 20, 30]
           description: Tags that will be associated with the product.
-
+    Category:
+      type: object
+      description: Category to which the product belongs
+      required:
+        - id
+      properties:
+        id:
+          type: number
+          format: int32
+          nullable: false
+          example: 20
     Variant:
       type: object
       properties:
