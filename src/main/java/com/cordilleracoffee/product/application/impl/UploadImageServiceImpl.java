@@ -7,9 +7,9 @@ import com.cordilleracoffee.product.application.exception.UnauthorizedUserExcept
 import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
-import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
-import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
-import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
+import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequest;
+import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequests;
+import com.cordilleracoffee.product.infrastructure.dto.generateurl.SignedUrl;
 
 import java.util.ArrayList;
 import java.util.List;

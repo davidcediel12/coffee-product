@@ -2,9 +2,9 @@ package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
 import com.cordilleracoffee.product.application.UploadImageService;
-import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequest;
-import com.cordilleracoffee.product.infrastructure.dto.ImageUrlRequests;
-import com.cordilleracoffee.product.infrastructure.dto.SignedUrl;
+import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequest;
+import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequests;
+import com.cordilleracoffee.product.infrastructure.dto.generateurl.SignedUrl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

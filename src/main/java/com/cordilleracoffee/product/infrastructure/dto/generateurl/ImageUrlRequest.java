@@ -1,4 +1,4 @@
-package com.cordilleracoffee.product.infrastructure.dto;
+package com.cordilleracoffee.product.infrastructure.dto.generateurl;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
