@@ -24,9 +24,9 @@ class ProductController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/images/upload-urls")
-    List<SignedUrl> getUploadUrls(@RequestBody @Valid ImageUrlRequests imageUrlRequests,
-                                  @RequestHeader("App-User-Roles") List<UserRole> userRoles,
-                                  @RequestHeader("App-User-ID") String userId) {
+    List<SignedUrl> generateUploadUrls(@RequestBody @Valid ImageUrlRequests imageUrlRequests,
+                                       @RequestHeader("App-User-Roles") List<UserRole> userRoles,
+                                       @RequestHeader("App-User-ID") String userId) {
 
         return uploadImageService.getSignedUrls(imageUrlRequests, userId, userRoles);
     }
