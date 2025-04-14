@@ -2,9 +2,11 @@ package com.cordilleracoffee.product.infrastructure.dto.saveproduct;
 
 import com.cordilleracoffee.product.domain.model.ProductStatus;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public record CreateProductRequest(
@@ -27,9 +29,8 @@ public record CreateProductRequest(
         @NotNull
         ProductStatus status,
 
-        @NotNull
-        @DecimalMin(value = "0.0", inclusive = false)
-        BigDecimal basePrice,
+        @Valid
+        MonetaryAmount basePrice,
 
         @NotNull
         @Size(min = 1)

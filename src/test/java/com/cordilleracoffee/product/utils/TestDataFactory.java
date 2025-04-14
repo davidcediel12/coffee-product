@@ -26,7 +26,10 @@ public class TestDataFactory {
                   "sku": "CAF-MR",
                   "stock": 55,
                   "status": "AVAILABLE",
-                  "basePrice": 30.5,
+                  "basePrice": {
+                    "amount": 30.5,
+                    "currency": "USD"
+                  },
                   "images": [
                     {
                       "id": "b08ee4b0-22bb-446c-bd33-0343a77e9b11",
@@ -39,7 +42,10 @@ public class TestDataFactory {
                       "name": "package of 250gr",
                       "description": "Small package",
                       "stock": 55,
-                      "basePrice": 30.5,
+                      "basePrice": {
+                        "amount": 30.5,
+                        "currency": "USD"
+                      },
                       "isPrimary": true,
                       "sku": "CAF-2500-MR"
                     }
@@ -50,6 +56,7 @@ public class TestDataFactory {
                     }
                   ]
                 }
+                
                 """;
     }
 

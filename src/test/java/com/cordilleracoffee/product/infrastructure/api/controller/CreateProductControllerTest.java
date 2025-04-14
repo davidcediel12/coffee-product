@@ -12,6 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -109,7 +110,7 @@ class CreateProductControllerTest {
     void shouldReturnErrorWhenPriceIsNegative() throws Exception {
 
         var productRequest = TestDataFactory.validCreateProductRequestMap();
-        productRequest.put("basePrice", -1);
+        productRequest.put("basePrice", Map.of("amount", -1, "currency", "USD"));
 
         mockMvc.perform(post("/v1/products")
                         .contentType(MediaType.APPLICATION_JSON)
