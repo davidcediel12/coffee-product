@@ -1,8 +1,10 @@
 package com.cordilleracoffee.product.utils;
 
+
+
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Map;
