@@ -2,12 +2,16 @@ package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
 import com.cordilleracoffee.product.application.UploadImageService;
+import com.cordilleracoffee.product.utils.TestDataFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,6 +23,9 @@ class CreateProductControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @MockitoBean
     UploadImageService uploadImageService;
 
@@ -29,41 +36,84 @@ class CreateProductControllerTest {
 
         mockMvc.perform(post("/v1/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "name": "Grinded coffee beans",
-                                  "description": "Grinded coffe beans in a black package with the image of the farm",
-                                  "category": {
-                                    "id": 20
-                                  },
-                                  "sku": "CAF-MR",
-                                  "stock": 55,
-                                  "status": "AVAILABLE",
-                                  "basePrice": 30.5,
-                                  "images": [
-                                    {
-                                      "id": "b08ee4b0-22bb-446c-bd33-0343a77e9b11",
-                                      "isPrimary": true,
-                                      "displayOrder": 2
-                                    }
-                                  ],
-                                  "variants": [
-                                    {
-                                      "name": "package of 250gr",
-                                      "description": "Small package",
-                                      "stock": 55,
-                                      "basePrice": 30.5,
-                                      "isPrimary": true,
-                                      "sku": "CAF-2500-MR"
-                                    }
-                                  ],
-                                  "tags": [
-                                    {
-                                      "id": 20
-                                    }
-                                  ]
-                                }
-                                """))
+                        .content(TestDataFactory.validCreateProductRequestString()))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void shouldReturnErrorWhenProductNameIsNotProvided() throws Exception {
+
+        var productRequest = TestDataFactory.validCreateProductRequestMap();
+        productRequest.remove("name");
+
+        mockMvc.perform(post("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenProductNameIsEmpty() throws Exception {
+
+        var productRequest = TestDataFactory.validCreateProductRequestMap();
+        productRequest.put("name", "");
+
+        mockMvc.perform(post("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenProductDescriptionIsEmpty() throws Exception {
+
+        var productRequest = TestDataFactory.validCreateProductRequestMap();
+        productRequest.put("description", "");
+
+        mockMvc.perform(post("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenProductCategoryIsNotProvided() throws Exception {
+
+        var productRequest = TestDataFactory.validCreateProductRequestMap();
+        productRequest.remove("category");
+
+        mockMvc.perform(post("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenThereIsNoImages() throws Exception {
+
+        var productRequest = TestDataFactory.validCreateProductRequestMap();
+        productRequest.put("images", Collections.emptyList());
+
+        mockMvc.perform(post("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenPriceIsNegative() throws Exception {
+
+        var productRequest = TestDataFactory.validCreateProductRequestMap();
+        productRequest.put("basePrice", -1);
+
+        mockMvc.perform(post("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productRequest)))
+                .andExpect(status().isBadRequest());
     }
 }
