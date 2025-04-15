@@ -15,7 +15,6 @@ public class TagType {
     private String name;
 
     @Column(nullable = false, length = 1000)
-    @Lob
     private String description;
 
 
