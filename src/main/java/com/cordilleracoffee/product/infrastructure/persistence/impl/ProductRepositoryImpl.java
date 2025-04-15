@@ -3,9 +3,7 @@ package com.cordilleracoffee.product.infrastructure.persistence.impl;
 import com.cordilleracoffee.product.domain.model.Product;
 import com.cordilleracoffee.product.domain.repository.ProductRepository;
 import com.cordilleracoffee.product.infrastructure.mappers.ProductMapper;
-import com.cordilleracoffee.product.infrastructure.persistence.CategoryJpaRepository;
-import com.cordilleracoffee.product.infrastructure.persistence.ProductJpaRepository;
-import com.cordilleracoffee.product.infrastructure.persistence.TagJpaRepository;
+import com.cordilleracoffee.product.infrastructure.persistence.*;
 import com.cordilleracoffee.product.infrastructure.persistence.entity.Tag;
 import org.springframework.stereotype.Repository;
 
@@ -18,12 +16,19 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final ProductJpaRepository productJpaRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final TagJpaRepository tagJpaRepository;
+    private final VariantJpaRepository variantJpaRepository;
+    private final VariantImageJpaRepository variantImageJpaRepository;
+    private final ProductImageJpaRepository productImageJpaRepository;
+
     private final ProductMapper productMapper;
 
-    public ProductRepositoryImpl(ProductJpaRepository productJpaRepository, CategoryJpaRepository categoryJpaRepository, TagJpaRepository tagJpaRepository, ProductMapper productMapper) {
+    public ProductRepositoryImpl(ProductJpaRepository productJpaRepository, CategoryJpaRepository categoryJpaRepository, TagJpaRepository tagJpaRepository, VariantJpaRepository variantJpaRepository, VariantImageJpaRepository variantImageJpaRepository, ProductImageJpaRepository productImageJpaRepository, ProductMapper productMapper) {
         this.productJpaRepository = productJpaRepository;
         this.categoryJpaRepository = categoryJpaRepository;
         this.tagJpaRepository = tagJpaRepository;
+        this.variantJpaRepository = variantJpaRepository;
+        this.variantImageJpaRepository = variantImageJpaRepository;
+        this.productImageJpaRepository = productImageJpaRepository;
         this.productMapper = productMapper;
     }
 
@@ -35,12 +40,30 @@ public class ProductRepositoryImpl implements ProductRepository {
 
         Set<Tag> tags = new HashSet<>();
 
-        for(Long tagId : product.getTagIds()){
+        for (Long tagId : product.getTagIds()) {
             tags.add(tagJpaRepository.getReferenceById(tagId));
         }
         persistentProduct.setTags(tags);
 
-        return productJpaRepository.save(persistentProduct).getId();
+
+        var savedProduct = productJpaRepository.save(persistentProduct);
+
+        for (var image : persistentProduct.getImages()) {
+            image.setProduct(savedProduct);
+        }
+
+        productImageJpaRepository.saveAll(persistentProduct.getImages());
+
+        for (var variant : persistentProduct.getVariants()) {
+            variant.setProduct(savedProduct);
+            var savedVariant = variantJpaRepository.save(variant);
+            for (var image : variant.getVariantImages()) {
+                image.setVariant(savedVariant);
+            }
+            variantImageJpaRepository.saveAll(variant.getVariantImages());
+        }
+
+        return savedProduct.getId();
     }
 
     @Override
