@@ -1,13 +1,11 @@
 package com.cordilleracoffee.product.utils;
 
 
-import com.cordilleracoffee.product.domain.model.Money;
-import com.cordilleracoffee.product.domain.model.Product;
-import com.cordilleracoffee.product.domain.model.ProductImage;
-import com.cordilleracoffee.product.domain.model.Sku;
+import com.cordilleracoffee.product.domain.model.*;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -95,5 +93,12 @@ public class TestDataFactory {
                 .basePrice(new Money(BigDecimal.TEN, "EUR"))
                 .build();
 
+    }
+
+
+    public static @NotNull Variant validProductVariant() {
+        return new Variant("variant1", "desc1",
+                new Stock(10L), new Money(BigDecimal.TEN, "EUR"), true,
+                new Sku("SKU123"));
     }
 }

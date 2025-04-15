@@ -23,13 +23,44 @@ public class Product {
         this.name = builder.name;
         this.description = builder.description;
         this.sku = builder.sku;
-        this.stock = builder.stock;
+        this.stock = builder.stock != null ? builder.stock : new Stock(0L);
         this.status = builder.status;
         this.categoryId = builder.categoryId;
         this.basePrice = builder.basePrice;
         this.images = builder.images;
         this.variants = builder.variants;
         this.tagIds = builder.tagIds;
+
+        validateProduct();
+    }
+
+    private void validateProduct() {
+
+        if (this.basePrice != null && this.variants != null && !this.variants.isEmpty()) {
+            throw new IllegalArgumentException("Product cannot have base price and variants");
+        }
+
+        if (this.basePrice == null && (this.variants == null || !this.variants.isEmpty())) {
+            throw new IllegalArgumentException("Product must have base price or variants");
+        }
+
+        if (this.images == null || this.images.isEmpty()) {
+            throw new IllegalArgumentException("Product must have images");
+        }
+
+        if (this.name == null || this.name.isEmpty()) {
+            throw new IllegalArgumentException("Product must have name");
+        }
+
+        if (this.description == null || this.description.isEmpty()) {
+            throw new IllegalArgumentException("Product must have description");
+        }
+
+        if (this.sku == null) {
+            throw new IllegalArgumentException("Product must have sku");
+        }
+
+
     }
 
     public Set<ProductImage> getImages() {
@@ -58,7 +89,6 @@ public class Product {
             this.categoryId = categoryId;
             this.images = images;
         }
-
 
 
         public Builder id(Long id) {
