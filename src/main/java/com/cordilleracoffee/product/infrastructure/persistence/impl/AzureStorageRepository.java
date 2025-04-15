@@ -28,11 +28,7 @@ public class AzureStorageRepository implements FileStorageRepository {
         OffsetDateTime expiryTime = OffsetDateTime.now()
                 .plusMinutes(expirationMinutes);
 
-        BlobSasPermission blobSasPermission = new BlobSasPermission()
-                .setWritePermission(true);
-
-        BlobServiceSasSignatureValues sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, blobSasPermission)
-                .setStartTime(OffsetDateTime.now());
+        var sasSignatureValues = generateSasPermissions(expiryTime, false, true);
 
         return blobClient.getBlobUrl() + "?" + blobClient.generateSas(sasSignatureValues);
     }
@@ -44,13 +40,30 @@ public class AzureStorageRepository implements FileStorageRepository {
         BlobContainerClient sourceContainer = blobClientFactory.createBlobContainerClient(source);
         BlobContainerClient targetContainer = blobClientFactory.createBlobContainerClient(destination);
 
-        BlobClient sourceBlobClient = sourceContainer.getBlobClient(finalImageName);
-        BlobClient destinationBlob = targetContainer.getBlobClient(imageName);
+        BlobClient sourceBlobClient = sourceContainer.getBlobClient(imageName);
 
-        destinationBlob.getBlockBlobClient().uploadFromUrl(sourceBlobClient.getBlobUrl());
+        var signatureValues = generateSasPermissions(OffsetDateTime.now().plusMinutes(1),
+                true, true);
+        String sasToken = sourceBlobClient.generateSas(signatureValues);
+        String sourceUrl = sourceBlobClient.getBlobUrl() + "?"  + sasToken;
+
+        BlobClient destinationBlob = targetContainer.getBlobClient(finalImageName);
+
+        destinationBlob.getBlockBlobClient().uploadFromUrl(sourceUrl);
         sourceBlobClient.delete();
 
         return destinationBlob.getBlobUrl();
+    }
+
+    private static BlobServiceSasSignatureValues generateSasPermissions(
+            OffsetDateTime expiryTime, boolean readPermission, boolean writePermission) {
+
+        BlobSasPermission blobSasPermission = new BlobSasPermission()
+                .setWritePermission(writePermission)
+                .setReadPermission(readPermission);
+
+        return new BlobServiceSasSignatureValues(expiryTime, blobSasPermission)
+                .setStartTime(OffsetDateTime.now());
     }
 
     private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {
