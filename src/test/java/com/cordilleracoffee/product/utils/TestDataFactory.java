@@ -1,13 +1,18 @@
 package com.cordilleracoffee.product.utils;
 
 
-
+import com.cordilleracoffee.product.domain.model.Money;
+import com.cordilleracoffee.product.domain.model.Product;
+import com.cordilleracoffee.product.domain.model.ProductImage;
+import com.cordilleracoffee.product.domain.model.Sku;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Set;
 
 public class TestDataFactory {
 
@@ -80,5 +85,15 @@ public class TestDataFactory {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public static Product validProduct() {
+
+        return new Product.Builder("product1", "desc", new Sku("SKU"), 1L,
+                Set.of(new ProductImage(1L, 1, true, "url.com")))
+                .basePrice(new Money(BigDecimal.TEN, "EUR"))
+                .build();
+
     }
 }

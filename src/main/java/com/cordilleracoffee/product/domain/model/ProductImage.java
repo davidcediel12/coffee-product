@@ -7,7 +7,7 @@ public class ProductImage {
     private Boolean isPrimary;
     private Integer displayOrder;
 
-    public ProductImage(Integer displayOrder, Boolean isPrimary, String url, Long id) {
+    public ProductImage(Long id, Integer displayOrder, Boolean isPrimary, String url) {
         if(displayOrder == null || displayOrder < 0){
             throw new IllegalArgumentException("Display order must be a non-negative integer");
         }

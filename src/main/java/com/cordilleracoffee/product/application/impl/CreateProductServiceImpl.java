@@ -7,6 +7,7 @@ import com.cordilleracoffee.product.application.exception.InvalidProductExceptio
 import com.cordilleracoffee.product.domain.commands.CreateProduct;
 import com.cordilleracoffee.product.domain.model.*;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
+import com.cordilleracoffee.product.domain.repository.ProductRepository;
 import com.cordilleracoffee.product.domain.services.ProductService;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.TagDto;
@@ -22,32 +23,43 @@ public class CreateProductServiceImpl {
     private final ProductService productService;
     private final ImageRepository imageRepository;
     private final FileStorageRepository fileStorageRepository;
+    private final ProductRepository productRepository;
 
-    public CreateProductServiceImpl(ProductService productService, ImageRepository imageRepository, FileStorageRepository fileStorageRepository) {
+    public CreateProductServiceImpl(ProductService productService, ImageRepository imageRepository, FileStorageRepository fileStorageRepository, ProductRepository productRepository) {
         this.productService = productService;
         this.imageRepository = imageRepository;
         this.fileStorageRepository = fileStorageRepository;
+        this.productRepository = productRepository;
     }
 
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
 
-        createProductImages(createProductCommand);
+        productService.validateProduct(createProductCommand.request().name(), createProductCommand.request().sku());
 
-        productService.createProduct(toDomainCommand(createProductCommand, List.of()));
+        List<ProductImage> productImages = createProductImages(createProductCommand);
+
+        Product product = productService.createProduct(toDomainCommand(createProductCommand, productImages));
+        fileStorageRepository.copyImages("temp", "product-assets", product.getImages());
+
+        productRepository.save(product);
+
         return URI.create("http://localhost:8080/products/12345");
     }
 
-    private void createProductImages(CreateProductCommand createProductCommand) {
+    private List<ProductImage> createProductImages(CreateProductCommand createProductCommand) {
         Map<String, TemporalImage> imageMap = imageRepository.getTemporalImages(createProductCommand.userId());
 
-        boolean tempImageExist = createProductCommand.request().images().stream()
-                        .allMatch(image -> imageMap.containsKey(image.id().toString()));
+        return createProductCommand.request().images().stream()
+                .map(imageDto -> {
+                    boolean imageNotPresent = !imageMap.containsKey(imageDto.id().toString());
+                    if (imageNotPresent) {
+                        throw new InvalidProductException("There is temporal image ids that are not present in the system");
+                    }
+                    TemporalImage temporalImage = imageMap.get(imageDto.id().toString());
 
-        if(!tempImageExist) {
-            throw new InvalidProductException("There is temporal image ids that are not present in the system");
-        }
-
-        fileStorageRepository.copyImages("temp", "product-assets", imageMap.values().stream().toList());
+                    return new ProductImage(null, imageDto.displayOrder(), imageDto.isPrimary(), temporalImage.url());
+                })
+                .toList();
     }
 
 

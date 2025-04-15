@@ -6,6 +6,7 @@ import com.cordilleracoffee.product.application.exception.InvalidProductExceptio
 import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
+import com.cordilleracoffee.product.domain.repository.ProductRepository;
 import com.cordilleracoffee.product.domain.services.ProductService;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.cordilleracoffee.product.utils.TestDataFactory;
@@ -37,6 +38,9 @@ class CreateProductServiceImplTest {
     @Mock
     FileStorageRepository fileStorageRepository;
 
+    @Mock
+    ProductRepository productRepository;
+
     @InjectMocks
     CreateProductServiceImpl createProductService;
 
@@ -49,6 +53,8 @@ class CreateProductServiceImplTest {
                         "other", "url", "user-123")
         ));
 
+        when(productService.createProduct(any())).thenReturn(TestDataFactory.validProduct());
+
 
         CreateProductRequest productRequest = TestDataFactory.validCreateProductRequest();
 
@@ -59,22 +65,28 @@ class CreateProductServiceImplTest {
 
         assertThat(uri).isEqualTo(URI.create("http://localhost:8080/products/12345"));
 
+        verify(productService).validateProduct(anyString(), anyString());
         verify(productService).createProduct(any());
-        verify(fileStorageRepository).copyImages(eq("temp"), eq("product-assets"), anyList());
+        verify(fileStorageRepository).copyImages(eq("temp"), eq("product-assets"), anySet());
+        verify(productRepository).save(any());
     }
 
     @Test
-    void shouldReturnErrorWhenImagesNotExist(){
-
-
+    void shouldReturnErrorWhenImagesNotExist() {
 
         CreateProductCommand createProductCommand = new CreateProductCommand(TestDataFactory.validCreateProductRequest(),
                 "user-123", List.of(UserRole.SELLER));
 
 
+        when(imageRepository.getTemporalImages(anyString())).thenReturn(Map.of(
+                "other-image", new TemporalImage("other-image",
+                        "other", "url", "user-123")
+        ));
 
         assertThrows(InvalidProductException.class, () -> createProductService.createProduct(
                 createProductCommand
         ));
     }
+
+
 }

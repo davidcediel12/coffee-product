@@ -3,13 +3,13 @@ package com.cordilleracoffee.product.infrastructure.persistence.impl;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
-import com.cordilleracoffee.product.domain.model.TemporalImage;
-import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
 import com.cordilleracoffee.product.application.FileStorageRepository;
+import com.cordilleracoffee.product.domain.model.ProductImage;
+import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class AzureStorageRepository implements FileStorageRepository {
@@ -39,21 +39,21 @@ public class AzureStorageRepository implements FileStorageRepository {
     }
 
     @Override
-    public void copyImages(String temp, String s, List<TemporalImage> objects) {
+    public void copyImages(String temp, String destinationFolder, Set<ProductImage> images) {
 
     }
 
     private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {
 
-        if(folder == null || folder.isEmpty() || fileName == null || fileName.isEmpty()) {
+        if (folder == null || folder.isEmpty() || fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Folder and fileName cannot be empty");
         }
 
-        if(expirationMinutes == null || expirationMinutes < 0) {
+        if (expirationMinutes == null || expirationMinutes < 0) {
             throw new IllegalArgumentException("Expiration minutes must be a non-null positive number");
         }
 
-        if(expirationMinutes > 60){
+        if (expirationMinutes > 60) {
             throw new IllegalArgumentException("Expiration should be less or equal than 60 minutes");
         }
     }
