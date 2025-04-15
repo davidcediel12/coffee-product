@@ -1,5 +1,6 @@
 package com.cordilleracoffee.product.application.impl;
 
+import com.cordilleracoffee.product.CreateProductService;
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.annotation.UseCase;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
@@ -18,7 +19,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 @UseCase
-public class CreateProductServiceImpl {
+public class CreateProductServiceImpl implements CreateProductService {
 
     private final ProductService productService;
     private final ImageRepository imageRepository;
@@ -32,6 +33,7 @@ public class CreateProductServiceImpl {
         this.productRepository = productRepository;
     }
 
+    @Override
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
 
         CreateProductRequest productRequest = createProductCommand.request();
@@ -61,7 +63,7 @@ public class CreateProductServiceImpl {
 
                 String finalImageName = Path.of(userId, variantImage.getName()).toString();
 
-                String finalUrl = fileStorageRepository.changeImageLocation("temp", "product",
+                String finalUrl = fileStorageRepository.changeImageLocation("temp", "product-assets",
                         variantImage.getName(), finalImageName);
 
                 variantImage.setUrl(finalUrl);
@@ -75,7 +77,7 @@ public class CreateProductServiceImpl {
 
             String finalImageName = Path.of(userId, productImage.getName()).toString();
 
-            String finalUrl = fileStorageRepository.changeImageLocation("temp", "product",
+            String finalUrl = fileStorageRepository.changeImageLocation("temp", "product-assets",
                     productImage.getName(), finalImageName);
 
             productImage.setUrl(finalUrl);
@@ -85,6 +87,11 @@ public class CreateProductServiceImpl {
 
 
     private List<Variant> createDomainVariants(CreateProductRequest productRequest, Map<String, TemporalImage> imageMap) {
+
+        if(productRequest.variants() == null){
+            return Collections.emptyList();
+        }
+
         List<Variant> domainVariants = new ArrayList<>();
 
         for (var variant : productRequest.variants()) {
