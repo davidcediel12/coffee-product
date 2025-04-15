@@ -8,6 +8,6 @@ public record TemporalImage(String id, String name, String url, String userId) {
         Assert.notNull(id, "id must not be null");
         Assert.notNull(name, "name must not be null");
         Assert.notNull(url, "url must not be null");
-        Assert.notNull(url, "user id must not be null");
+        Assert.notNull(userId, "user id must not be null");
     }
 }
