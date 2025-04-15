@@ -62,7 +62,7 @@ class ProductTest {
     private static Product.@NotNull Builder initialProduct() {
         return new Product.Builder(
                 "product", "desc", "user-123", new Sku("SKU"), 1L,
-                Set.of(new ProductImage(1L, 1, true, "url.com")));
+                Set.of(new ProductImage(1L, "image", 1, true, "url.com")));
     }
 
 

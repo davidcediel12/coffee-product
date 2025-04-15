@@ -90,7 +90,7 @@ public class CreateProductServiceImpl {
 
                 TemporalImage temporalImage = imageMap.get(variantImage.id().toString());
 
-                var domainVariantImage = new VariantImage(null,
+                var domainVariantImage = new VariantImage(null, temporalImage.name(),
                         variantImage.displayOrder(), variantImage.isPrimary(), temporalImage.url());
 
                 variantImages.add(domainVariantImage);
@@ -119,7 +119,8 @@ public class CreateProductServiceImpl {
                     }
                     TemporalImage temporalImage = imageMap.get(imageDto.id().toString());
 
-                    return new ProductImage(null, imageDto.displayOrder(), imageDto.isPrimary(), temporalImage.url());
+                    return new ProductImage(null, temporalImage.name(),
+                            imageDto.displayOrder(), imageDto.isPrimary(), temporalImage.url());
                 })
                 .toList();
     }

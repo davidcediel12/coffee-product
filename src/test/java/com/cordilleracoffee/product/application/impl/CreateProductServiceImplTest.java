@@ -67,7 +67,8 @@ class CreateProductServiceImplTest {
 
         verify(productService).validateProduct(anyString(), anyString(), anyString());
         verify(productService).createProduct(any());
-        verify(fileStorageRepository).copyImages(eq("temp"), eq("product-assets"), anySet());
+
+        verify(fileStorageRepository, atLeastOnce()).changeImageLocation(eq("temp"), eq("product-assets"), anyString(), eq("user-123"));
         verify(productRepository).save(any());
     }
 

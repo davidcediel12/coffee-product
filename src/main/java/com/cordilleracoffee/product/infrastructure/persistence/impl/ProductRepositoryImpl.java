@@ -1,7 +1,6 @@
 package com.cordilleracoffee.product.infrastructure.persistence.impl;
 
 import com.cordilleracoffee.product.domain.model.Product;
-import com.cordilleracoffee.product.domain.model.Variant;
 import com.cordilleracoffee.product.domain.repository.ProductRepository;
 import com.cordilleracoffee.product.infrastructure.mappers.ProductMapper;
 import com.cordilleracoffee.product.infrastructure.persistence.CategoryJpaRepository;
@@ -46,11 +45,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public boolean existsByUserAndName(String userId, String name) {
-        return productJpaRepository.existsByUserIdAndName(userId, name);
+        return productJpaRepository.existsBySellerIdAndName(userId, name);
     }
 
     @Override
     public boolean existByUserAndSku(String userId, String sku) {
-        return productJpaRepository.existsByUserIdAndSku(userId, sku);
+        return productJpaRepository.existsBySellerIdAndSku(userId, sku);
     }
 }

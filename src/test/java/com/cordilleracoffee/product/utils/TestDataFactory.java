@@ -89,7 +89,7 @@ public class TestDataFactory {
     public static Product validProduct() {
 
         return new Product.Builder("product1", "desc", "user-123", new Sku("SKU"), 1L,
-                Set.of(new ProductImage(1L, 1, true, "url.com")))
+                Set.of(new ProductImage(1L, "image", 1, true, "url.com")))
                 .basePrice(new Money(BigDecimal.TEN, "EUR"))
                 .stock(new Stock(10L))
                 .status(ProductStatus.AVAILABLE)
@@ -101,6 +101,6 @@ public class TestDataFactory {
     public static @NotNull Variant validProductVariant() {
         return new Variant("variant1", "desc1",
                 new Stock(10L), new Money(BigDecimal.TEN, "EUR"), true,
-                new Sku("SKU123"));
+                new Sku("SKU123"), Set.of(new VariantImage(1L, "image", 1, true, "url.com")));
     }
 }
