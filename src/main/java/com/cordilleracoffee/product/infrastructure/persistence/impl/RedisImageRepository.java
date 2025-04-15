@@ -43,8 +43,13 @@ public class RedisImageRepository implements ImageRepository {
 
         redisTemplate.opsForHash().entries(TEMPORAL_IMAGES_PREFIX + userId)
                 .forEach((key, value) -> temporalImageMap.put(
-                        key.toString(), (TemporalImage) value));
+                        key.toString(), toTemporalImage((TempImage) value)));
 
         return temporalImageMap;
+    }
+
+
+    private TemporalImage toTemporalImage(TempImage tempImage) {
+        return new TemporalImage(tempImage.id(), tempImage.name(), tempImage.url(), tempImage.userId());
     }
 }
