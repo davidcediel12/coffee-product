@@ -8,7 +8,6 @@ import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
 import java.time.OffsetDateTime;
 
 @Service
@@ -40,12 +39,10 @@ public class AzureStorageRepository implements FileStorageRepository {
 
 
     @Override
-    public String changeImageLocation(String source, String destination, String imageName, String userId) {
+    public String changeImageLocation(String source, String destination, String imageName, String finalImageName) {
 
         BlobContainerClient sourceContainer = blobClientFactory.createBlobContainerClient(source);
         BlobContainerClient targetContainer = blobClientFactory.createBlobContainerClient(destination);
-
-        String finalImageName = Path.of(userId, imageName).toString();
 
         BlobClient sourceBlobClient = sourceContainer.getBlobClient(finalImageName);
         BlobClient destinationBlob = targetContainer.getBlobClient(imageName);

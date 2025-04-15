@@ -14,6 +14,7 @@ import com.cordilleracoffee.product.infrastructure.dto.saveproduct.TagDto;
 import jakarta.validation.Valid;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.*;
 
 @UseCase
@@ -57,10 +58,14 @@ public class CreateProductServiceImpl {
     private void moveVariantImages(List<Variant> domainVariants, String userId) {
         for (var variant : domainVariants) {
             for (var variantImage : variant.getVariantImages()) {
+
+                String finalImageName = Path.of(userId, variantImage.getName()).toString();
+
                 String finalUrl = fileStorageRepository.changeImageLocation("temp", "product",
-                        variantImage.getName(), userId);
+                        variantImage.getName(), finalImageName);
 
                 variantImage.setUrl(finalUrl);
+                variantImage.setName(finalImageName);
             }
         }
     }
@@ -68,10 +73,13 @@ public class CreateProductServiceImpl {
     private void moveProductImages(List<ProductImage> productImages, String userId) {
         for (var productImage : productImages) {
 
+            String finalImageName = Path.of(userId, productImage.getName()).toString();
+
             String finalUrl = fileStorageRepository.changeImageLocation("temp", "product",
-                    productImage.getName(), userId);
+                    productImage.getName(), finalImageName);
 
             productImage.setUrl(finalUrl);
+            productImage.setName(finalImageName);
         }
     }
 
