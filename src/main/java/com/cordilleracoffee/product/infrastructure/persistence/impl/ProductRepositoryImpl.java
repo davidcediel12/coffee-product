@@ -7,7 +7,9 @@ import com.cordilleracoffee.product.infrastructure.persistence.*;
 import com.cordilleracoffee.product.infrastructure.persistence.entity.Tag;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -57,7 +59,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         for (var variant : persistentProduct.getVariants()) {
             variant.setProduct(savedProduct);
             var savedVariant = variantJpaRepository.save(variant);
-            for (var image : variant.getVariantImages()) {
+            for (var image : Optional.ofNullable(variant.getVariantImages()).orElse(Collections.emptySet())) {
                 image.setVariant(savedVariant);
             }
             variantImageJpaRepository.saveAll(variant.getVariantImages());

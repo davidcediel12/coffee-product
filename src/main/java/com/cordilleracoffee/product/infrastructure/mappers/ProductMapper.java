@@ -35,7 +35,6 @@ public interface ProductMapper {
     @Mapping(target = "currency", source = "basePrice.currency")
     @Mapping(target = "sku", source = "sku.sku")
     @Mapping(target = "product", ignore = true)
-    @Mapping(target = "variantImages", ignore = true)
     Variant toJpaEntity(com.cordilleracoffee.product.domain.model.Variant domainVariant);
 
     List<Variant> toPersistentVariants(Set<com.cordilleracoffee.product.domain.model.Variant> domainVariants);
