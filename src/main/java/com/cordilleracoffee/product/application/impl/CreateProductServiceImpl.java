@@ -90,7 +90,7 @@ public class CreateProductServiceImpl implements CreateProductService {
 
     private List<Variant> createDomainVariants(CreateProductRequest productRequest, Map<String, TemporalImage> imageMap) {
 
-        if(productRequest.variants() == null){
+        if (productRequest.variants() == null) {
             return Collections.emptyList();
         }
 
@@ -116,7 +116,7 @@ public class CreateProductServiceImpl implements CreateProductService {
             var domainVariant = new Variant(
                     variant.name(), variant.description(),
                     new Stock((long) variant.stock()),
-                    new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency()),
+                    new Money(variant.basePrice().amount(), variant.basePrice().currency()),
                     variant.isPrimary(), new Sku(variant.sku()), variantImages);
 
             domainVariants.add(domainVariant);
@@ -153,12 +153,17 @@ public class CreateProductServiceImpl implements CreateProductService {
                 .map(TagDto::id)
                 .toList();
 
+        Money productBasePrice = null;
+
+        if (productRequest.basePrice() != null) {
+            new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency());
+        }
         return new CreateProduct(
                 createProductCommand.userId(), productRequest.name(),
                 productRequest.description(), productRequest.category().id(),
                 new Sku(productRequest.sku()), new Stock(Long.valueOf(productRequest.stock())),
                 productRequest.status(),
-                new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency()),
+                productBasePrice,
                 images, variants, tagIds
         );
     }
