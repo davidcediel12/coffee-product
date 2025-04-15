@@ -88,9 +88,11 @@ public class TestDataFactory {
 
     public static Product validProduct() {
 
-        return new Product.Builder("product1", "desc", new Sku("SKU"), 1L,
+        return new Product.Builder("product1", "desc", "user-123", new Sku("SKU"), 1L,
                 Set.of(new ProductImage(1L, 1, true, "url.com")))
                 .basePrice(new Money(BigDecimal.TEN, "EUR"))
+                .stock(new Stock(10L))
+                .status(ProductStatus.AVAILABLE)
                 .build();
 
     }

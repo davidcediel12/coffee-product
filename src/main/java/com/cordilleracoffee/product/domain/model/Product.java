@@ -6,6 +6,7 @@ import java.util.Set;
 public class Product {
 
     private Long id;
+    private String sellerId;
     private String name;
     private String description;
     private Sku sku;
@@ -30,6 +31,7 @@ public class Product {
         this.images = builder.images;
         this.variants = builder.variants;
         this.tagIds = builder.tagIds;
+        this.sellerId = builder.sellerId;
 
         validateProduct();
     }
@@ -60,11 +62,59 @@ public class Product {
             throw new IllegalArgumentException("Product must have sku");
         }
 
+        if(this.sellerId == null){
+            throw new IllegalArgumentException("Product must belong to a seller");
+        }
 
+
+    }
+
+    public String getSellerId() {
+        return sellerId;
     }
 
     public Set<ProductImage> getImages() {
         return new HashSet<>(images);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Sku getSku() {
+        return sku;
+    }
+
+    public Stock getStock() {
+        return stock;
+    }
+
+    public ProductStatus getStatus() {
+        return status;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public Money getBasePrice() {
+        return basePrice;
+    }
+
+    public Set<Variant> getVariants() {
+        return new HashSet<>(variants);
+    }
+
+    public Set<Long> getTagIds() {
+        return tagIds;
     }
 
     public static class Builder {
@@ -72,6 +122,7 @@ public class Product {
         private Long id;
         private String name;
         private String description;
+        private String sellerId;
         private Sku sku;
         private Stock stock;
         private ProductStatus status;
@@ -82,12 +133,14 @@ public class Product {
         private Set<Long> tagIds;
 
 
-        public Builder(String name, String description, Sku sku, Long categoryId, Set<ProductImage> images) {
+        public Builder(String name, String description, String sellerId,
+                       Sku sku, Long categoryId, Set<ProductImage> images) {
             this.name = name;
             this.description = description;
             this.sku = sku;
             this.categoryId = categoryId;
             this.images = images;
+            this.sellerId = sellerId;
         }
 
 
@@ -103,6 +156,11 @@ public class Product {
 
         public Builder description(String description) {
             this.description = description;
+            return this;
+        }
+
+        public Builder sellerId(String sellerId) {
+            this.sellerId = sellerId;
             return this;
         }
 

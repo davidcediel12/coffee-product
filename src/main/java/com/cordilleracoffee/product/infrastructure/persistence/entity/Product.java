@@ -2,8 +2,10 @@ package com.cordilleracoffee.product.infrastructure.persistence.entity;
 
 
 import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -21,7 +23,7 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
-    private String userId;
+    private String sellerId;
 
     @Column(nullable = false)
     private String sku;
@@ -33,6 +35,9 @@ public class Product {
 
     private String currency;
     private BigDecimal basePrice;
+
+    @ManyToOne
+    private Category category;
 
     @OneToMany(mappedBy = "product")
     private Set<ProductImage> images;
@@ -73,12 +78,12 @@ public class Product {
         this.description = description;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getSellerId() {
+        return sellerId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
     }
 
     public String getSku() {
@@ -91,6 +96,8 @@ public class Product {
 
 
     public Long getStock() {
+
+        
         return stock;
     }
 
@@ -144,5 +151,30 @@ public class Product {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Product product = (Product) o;
+        return getId() != null && Objects.equals(getId(), product.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }

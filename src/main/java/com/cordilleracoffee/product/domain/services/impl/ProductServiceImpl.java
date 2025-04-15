@@ -22,7 +22,8 @@ public class ProductServiceImpl implements ProductService {
     public Product createProduct(CreateProduct createProduct) {
 
         return new Product.Builder(createProduct.name(), createProduct.description(),
-                createProduct.sku(), createProduct.categoryId(), new HashSet<>(createProduct.images()))
+                createProduct.userId(), createProduct.sku(),
+                createProduct.categoryId(), new HashSet<>(createProduct.images()))
                 .stock(createProduct.stock())
                 .basePrice(createProduct.basePrice())
                 .status(createProduct.status())
