@@ -13,6 +13,7 @@ import com.cordilleracoffee.product.domain.services.ProductService;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.TagDto;
 import jakarta.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -34,6 +35,7 @@ public class CreateProductServiceImpl implements CreateProductService {
     }
 
     @Override
+    @Transactional
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
 
         CreateProductRequest productRequest = createProductCommand.request();
