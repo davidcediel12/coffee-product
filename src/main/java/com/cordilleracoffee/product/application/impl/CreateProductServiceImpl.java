@@ -3,8 +3,8 @@ package com.cordilleracoffee.product.application.impl;
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.annotation.UseCase;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
-import com.cordilleracoffee.product.domain.exception.InvalidProductException;
 import com.cordilleracoffee.product.domain.commands.CreateProduct;
+import com.cordilleracoffee.product.domain.exception.InvalidProductException;
 import com.cordilleracoffee.product.domain.model.*;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
 import com.cordilleracoffee.product.domain.repository.ProductRepository;
@@ -14,8 +14,7 @@ import com.cordilleracoffee.product.infrastructure.dto.saveproduct.TagDto;
 import jakarta.validation.Valid;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @UseCase
 public class CreateProductServiceImpl {
@@ -34,12 +33,19 @@ public class CreateProductServiceImpl {
 
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
 
-        productService.validateProduct(createProductCommand.userId(), createProductCommand.request().name(),
-                createProductCommand.request().sku());
+        CreateProductRequest productRequest = createProductCommand.request();
+        productService.validateProduct(createProductCommand.userId(), productRequest.name(),
+                productRequest.sku());
 
-        List<ProductImage> productImages = createProductImages(createProductCommand);
+        Map<String, TemporalImage> imageMap = imageRepository.getTemporalImages(createProductCommand.userId());
 
-        Product product = productService.createProduct(toDomainCommand(createProductCommand, productImages));
+        List<ProductImage> productImages = createProductImages(createProductCommand, imageMap);
+
+
+        List<Variant> domainVariants = createDomainVariants(productRequest, imageMap);
+
+
+        Product product = productService.createProduct(toDomainCommand(createProductCommand, productImages, domainVariants));
         fileStorageRepository.copyImages("temp", "product-assets", product.getImages());
 
         productRepository.save(product);
@@ -47,14 +53,48 @@ public class CreateProductServiceImpl {
         return URI.create("http://localhost:8080/products/12345");
     }
 
-    private List<ProductImage> createProductImages(CreateProductCommand createProductCommand) {
-        Map<String, TemporalImage> imageMap = imageRepository.getTemporalImages(createProductCommand.userId());
+
+
+    private List<Variant> createDomainVariants(CreateProductRequest productRequest, Map<String, TemporalImage> imageMap) {
+        List<Variant> domainVariants = new ArrayList<>();
+
+        for (var variant : productRequest.variants()) {
+            Set<VariantImage> variantImages = new HashSet<>();
+
+            for (var variantImage : variant.images()) {
+
+                if(!imageMap.containsKey(variantImage.id().toString())) {
+                    throw new InvalidProductException("There is no image with id " + variantImage.id());
+                }
+
+                TemporalImage temporalImage = imageMap.get(variantImage.id().toString());
+
+                var domainVariantImage = new VariantImage(null,
+                        variantImage.displayOrder(), variantImage.isPrimary(), temporalImage.url());
+
+                variantImages.add(domainVariantImage);
+            }
+
+            var domainVariant = new Variant(
+                    variant.name(), variant.description(),
+                    new Stock((long) variant.stock()),
+                    new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency()),
+                    variant.isPrimary(), new Sku(variant.sku()), variantImages);
+
+            domainVariants.add(domainVariant);
+        }
+        return domainVariants;
+    }
+
+    private List<ProductImage> createProductImages(CreateProductCommand createProductCommand,
+                                                   Map<String, TemporalImage> imageMap) {
 
         return createProductCommand.request().images().stream()
                 .map(imageDto -> {
                     boolean imageNotPresent = !imageMap.containsKey(imageDto.id().toString());
                     if (imageNotPresent) {
-                        throw new InvalidProductException("There is temporal image ids that are not present in the system");
+                        throw new InvalidProductException("There is temporal image ids that are not present in the system " +
+                                "(id: " + imageDto.id() + ")");
                     }
                     TemporalImage temporalImage = imageMap.get(imageDto.id().toString());
 
@@ -64,18 +104,11 @@ public class CreateProductServiceImpl {
     }
 
 
-    private CreateProduct toDomainCommand(CreateProductCommand createProductCommand, List<ProductImage> images) {
+    private CreateProduct toDomainCommand(CreateProductCommand createProductCommand,
+                                          List<ProductImage> images, List<Variant> variants) {
 
         CreateProductRequest productRequest = createProductCommand.request();
 
-        List<Variant> variants = productRequest.variants().stream()
-                .map(variant -> new Variant(
-                        variant.name(), variant.description(),
-                        new Stock((long) variant.stock()),
-                        new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency()),
-                        variant.isPrimary(), new Sku(variant.sku()
-                )))
-                .toList();
 
 
         List<Long> tagIds = productRequest.tags().stream()

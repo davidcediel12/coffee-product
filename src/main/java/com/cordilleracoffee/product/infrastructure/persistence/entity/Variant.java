@@ -27,6 +27,9 @@ public class Variant {
     private BigDecimal basePrice;
 
     @Column(nullable = false)
+    private String currency;
+
+    @Column(nullable = false)
     private Boolean isPrimary;
 
     @Column(nullable = false)
@@ -110,5 +113,13 @@ public class Variant {
 
     public void setVariantImages(Set<VariantImage> variantImages) {
         this.variantImages = variantImages;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

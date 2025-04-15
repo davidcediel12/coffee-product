@@ -3,23 +3,21 @@ package com.cordilleracoffee.product.infrastructure.dto.saveproduct;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public record VariantDto(@NotBlank
-                         String name,
+import java.util.List;
 
-                         @NotBlank
-                         String description,
+public record VariantDto(@NotBlank String name,
 
-                         @Min(0)
-                         int stock,
+                         @NotBlank String description,
 
-                         @Valid
-                         MonetaryAmount basePrice,
+                         @Min(0) int stock,
 
-                         @NotNull
-                         Boolean isPrimary,
+                         @Valid MonetaryAmount basePrice,
 
-                         @NotBlank
-                         String sku) {
+                         @NotNull Boolean isPrimary,
+
+                         @NotBlank String sku,
+                         @NotEmpty @NotNull List<ImageDto> images) {
 }
