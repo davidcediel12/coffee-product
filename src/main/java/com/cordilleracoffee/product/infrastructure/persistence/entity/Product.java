@@ -3,6 +3,9 @@ package com.cordilleracoffee.product.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+import java.util.Set;
+
 @Entity
 public class Product {
 
@@ -22,6 +25,28 @@ public class Product {
 
     @Column(nullable = false)
     private String sku;
+
+
+    private Long stock;
+
+    private String status;
+
+    private String currency;
+    private BigDecimal basePrice;
+
+    @OneToMany(mappedBy = "product")
+    private Set<ProductImage> images;
+
+    @OneToMany(mappedBy = "product")
+    private Set<Variant> variants;
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_tag",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
 
     public Long getId() {
@@ -62,5 +87,62 @@ public class Product {
 
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public BigDecimal getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(BigDecimal basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    public Set<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<ProductImage> images) {
+        this.images = images;
+    }
+
+    public Set<Variant> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(Set<Variant> variants) {
+        this.variants = variants;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
