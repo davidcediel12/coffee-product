@@ -1,4 +1,4 @@
-package com.cordilleracoffee.product.application.exception;
+package com.cordilleracoffee.product.domain.exception;
 
 public class InvalidProductException extends RuntimeException {
 

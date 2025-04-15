@@ -2,7 +2,7 @@ package com.cordilleracoffee.product.application.impl;
 
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
-import com.cordilleracoffee.product.application.exception.InvalidProductException;
+import com.cordilleracoffee.product.domain.exception.InvalidProductException;
 import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
@@ -65,7 +65,7 @@ class CreateProductServiceImplTest {
 
         assertThat(uri).isEqualTo(URI.create("http://localhost:8080/products/12345"));
 
-        verify(productService).validateProduct(anyString(), anyString());
+        verify(productService).validateProduct(anyString(), anyString(), anyString());
         verify(productService).createProduct(any());
         verify(fileStorageRepository).copyImages(eq("temp"), eq("product-assets"), anySet());
         verify(productRepository).save(any());

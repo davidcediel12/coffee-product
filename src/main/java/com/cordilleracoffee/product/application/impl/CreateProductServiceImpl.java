@@ -3,7 +3,7 @@ package com.cordilleracoffee.product.application.impl;
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.annotation.UseCase;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
-import com.cordilleracoffee.product.application.exception.InvalidProductException;
+import com.cordilleracoffee.product.domain.exception.InvalidProductException;
 import com.cordilleracoffee.product.domain.commands.CreateProduct;
 import com.cordilleracoffee.product.domain.model.*;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
@@ -34,7 +34,8 @@ public class CreateProductServiceImpl {
 
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
 
-        productService.validateProduct(createProductCommand.request().name(), createProductCommand.request().sku());
+        productService.validateProduct(createProductCommand.userId(), createProductCommand.request().name(),
+                createProductCommand.request().sku());
 
         List<ProductImage> productImages = createProductImages(createProductCommand);
 

@@ -7,5 +7,5 @@ import jakarta.validation.constraints.NotBlank;
 public interface ProductService {
     Product createProduct(CreateProduct createProduct);
 
-    void validateProduct(@NotBlank String name, @NotBlank String sku);
+    void validateProduct(String userId, @NotBlank String name, @NotBlank String sku);
 }
