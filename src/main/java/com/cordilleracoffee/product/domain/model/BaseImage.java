@@ -24,6 +24,7 @@ public abstract class BaseImage {
         if(name == null || name.isEmpty()){
             throw new IllegalArgumentException("Image name cannot be null or empty");
         }
+        this.name = name;
     }
 
     public String getName() {
