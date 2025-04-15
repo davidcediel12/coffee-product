@@ -3,11 +3,13 @@ package com.cordilleracoffee.product.infrastructure.persistence.impl;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
+import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 public class AzureStorageRepository implements FileStorageRepository {
@@ -34,6 +36,11 @@ public class AzureStorageRepository implements FileStorageRepository {
                 .setStartTime(OffsetDateTime.now());
 
         return blobClient.getBlobUrl() + "?" + blobClient.generateSas(sasSignatureValues);
+    }
+
+    @Override
+    public void copyImages(String temp, String s, List<TemporalImage> objects) {
+
     }
 
     private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {

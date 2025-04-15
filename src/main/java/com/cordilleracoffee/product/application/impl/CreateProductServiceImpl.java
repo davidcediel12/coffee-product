@@ -1,5 +1,6 @@
 package com.cordilleracoffee.product.application.impl;
 
+import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.annotation.UseCase;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
 import com.cordilleracoffee.product.application.exception.InvalidProductException;
@@ -20,10 +21,12 @@ public class CreateProductServiceImpl {
 
     private final ProductService productService;
     private final ImageRepository imageRepository;
+    private final FileStorageRepository fileStorageRepository;
 
-    public CreateProductServiceImpl(ProductService productService, ImageRepository imageRepository) {
+    public CreateProductServiceImpl(ProductService productService, ImageRepository imageRepository, FileStorageRepository fileStorageRepository) {
         this.productService = productService;
         this.imageRepository = imageRepository;
+        this.fileStorageRepository = fileStorageRepository;
     }
 
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
@@ -43,6 +46,8 @@ public class CreateProductServiceImpl {
         if(!tempImageExist) {
             throw new InvalidProductException("There is temporal image ids that are not present in the system");
         }
+
+        fileStorageRepository.copyImages("temp", "product-assets", imageMap.values().stream().toList());
     }
 
 
