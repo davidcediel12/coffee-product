@@ -42,7 +42,7 @@ public class Product {
             throw new IllegalArgumentException("Product cannot have base price and variants");
         }
 
-        if (this.basePrice == null && (this.variants == null || !this.variants.isEmpty())) {
+        if (this.basePrice == null && (this.variants == null || this.variants.isEmpty())) {
             throw new IllegalArgumentException("Product must have base price or variants");
         }
 
