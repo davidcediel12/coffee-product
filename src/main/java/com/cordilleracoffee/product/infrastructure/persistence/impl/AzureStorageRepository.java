@@ -49,7 +49,7 @@ public class AzureStorageRepository implements FileStorageRepository {
 
         BlobClient destinationBlob = targetContainer.getBlobClient(finalImageName);
 
-        destinationBlob.getBlockBlobClient().uploadFromUrl(sourceUrl);
+        destinationBlob.getBlockBlobClient().uploadFromUrl(sourceUrl, true);
         sourceBlobClient.delete();
 
         return destinationBlob.getBlobUrl();
