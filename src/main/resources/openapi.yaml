@@ -197,6 +197,10 @@ components:
           description: |+
             Determines if the variant is the primary one, 
             it is used to show the product price and select a default when visiting the details
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
         sku:
           type: string
           example: CAF-2500-MR
