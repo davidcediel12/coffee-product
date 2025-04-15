@@ -34,6 +34,7 @@ public class CreateProductServiceImpl {
     public URI createProduct(@Valid CreateProductCommand createProductCommand) {
 
         CreateProductRequest productRequest = createProductCommand.request();
+
         productService.validateProduct(createProductCommand.userId(), productRequest.name(),
                 productRequest.sku());
 
@@ -41,18 +42,38 @@ public class CreateProductServiceImpl {
 
         List<ProductImage> productImages = createProductImages(createProductCommand, imageMap);
 
-
         List<Variant> domainVariants = createDomainVariants(productRequest, imageMap);
 
-
         Product product = productService.createProduct(toDomainCommand(createProductCommand, productImages, domainVariants));
-        fileStorageRepository.copyImages("temp", "product-assets", product.getImages());
+
+        moveProductImages(productImages, createProductCommand.userId());
+        moveVariantImages(domainVariants, createProductCommand.userId());
 
         productRepository.save(product);
 
         return URI.create("http://localhost:8080/products/12345");
     }
 
+    private void moveVariantImages(List<Variant> domainVariants, String userId) {
+        for (var variant : domainVariants) {
+            for (var variantImage : variant.getVariantImages()) {
+                String finalUrl = fileStorageRepository.changeImageLocation("temp", "product",
+                        variantImage.getName(), userId);
+
+                variantImage.setUrl(finalUrl);
+            }
+        }
+    }
+
+    private void moveProductImages(List<ProductImage> productImages, String userId) {
+        for (var productImage : productImages) {
+
+            String finalUrl = fileStorageRepository.changeImageLocation("temp", "product",
+                    productImage.getName(), userId);
+
+            productImage.setUrl(finalUrl);
+        }
+    }
 
 
     private List<Variant> createDomainVariants(CreateProductRequest productRequest, Map<String, TemporalImage> imageMap) {
@@ -63,7 +84,7 @@ public class CreateProductServiceImpl {
 
             for (var variantImage : variant.images()) {
 
-                if(!imageMap.containsKey(variantImage.id().toString())) {
+                if (!imageMap.containsKey(variantImage.id().toString())) {
                     throw new InvalidProductException("There is no image with id " + variantImage.id());
                 }
 
@@ -108,7 +129,6 @@ public class CreateProductServiceImpl {
                                           List<ProductImage> images, List<Variant> variants) {
 
         CreateProductRequest productRequest = createProductCommand.request();
-
 
 
         List<Long> tagIds = productRequest.tags().stream()

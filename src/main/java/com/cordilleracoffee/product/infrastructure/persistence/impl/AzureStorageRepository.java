@@ -1,15 +1,15 @@
 package com.cordilleracoffee.product.infrastructure.persistence.impl;
 
 import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.cordilleracoffee.product.application.FileStorageRepository;
-import com.cordilleracoffee.product.domain.model.ProductImage;
 import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
-import java.util.Set;
 
 @Service
 public class AzureStorageRepository implements FileStorageRepository {
@@ -38,9 +38,22 @@ public class AzureStorageRepository implements FileStorageRepository {
         return blobClient.getBlobUrl() + "?" + blobClient.generateSas(sasSignatureValues);
     }
 
-    @Override
-    public void copyImages(String temp, String destinationFolder, Set<ProductImage> images) {
 
+    @Override
+    public String changeImageLocation(String source, String destination, String imageName, String userId) {
+
+        BlobContainerClient sourceContainer = blobClientFactory.createBlobContainerClient(source);
+        BlobContainerClient targetContainer = blobClientFactory.createBlobContainerClient(destination);
+
+        String finalImageName = Path.of(userId, imageName).toString();
+
+        BlobClient sourceBlobClient = sourceContainer.getBlobClient(finalImageName);
+        BlobClient destinationBlob = targetContainer.getBlobClient(imageName);
+
+        destinationBlob.getBlockBlobClient().uploadFromUrl(sourceBlobClient.getBlobUrl());
+        sourceBlobClient.delete();
+
+        return destinationBlob.getBlobUrl();
     }
 
     private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {

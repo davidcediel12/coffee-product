@@ -1,6 +1,7 @@
 package com.cordilleracoffee.product.infrastructure.persistence.impl;
 
 import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.cordilleracoffee.product.infrastructure.persistence.BlobClientFactory;
 import org.springframework.stereotype.Service;
@@ -18,4 +19,11 @@ public class BlobClientFactoryImpl implements BlobClientFactory {
     public BlobClient createBlobClient(String containerName, String blobName) {
         return blobServiceClient.getBlobContainerClient(containerName).getBlobClient(blobName);
     }
+
+    @Override
+    public BlobContainerClient createBlobContainerClient(String containerName) {
+        return blobServiceClient.getBlobContainerClient(containerName);
+    }
+
+
 }

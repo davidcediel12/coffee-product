@@ -2,11 +2,12 @@ package com.cordilleracoffee.product.domain.model;
 
 public abstract class BaseImage {
     private Long id;
+    private String name;
     private String url;
     private Boolean isPrimary;
     private Integer displayOrder;
 
-    BaseImage(Long id, Integer displayOrder, Boolean isPrimary, String url) {
+    BaseImage(Long id, String name, Integer displayOrder, Boolean isPrimary, String url) {
         if(displayOrder == null || displayOrder < 0){
             throw new IllegalArgumentException("Display order must be a non-negative integer");
         }
@@ -18,6 +19,22 @@ public abstract class BaseImage {
         }
         this.url = url;
         this.id = id;
+
+
+        if(name == null || name.isEmpty()){
+            throw new IllegalArgumentException("Image name cannot be null or empty");
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Image name cannot be null or empty");
+        }
+        this.name = name;
     }
 
     public Long getId() {
@@ -33,6 +50,10 @@ public abstract class BaseImage {
     }
 
     public void setUrl(String url) {
+
+        if (url == null || url.isEmpty()) {
+            throw new IllegalArgumentException("Image url cannot be null or empty");
+        }
         this.url = url;
     }
 
