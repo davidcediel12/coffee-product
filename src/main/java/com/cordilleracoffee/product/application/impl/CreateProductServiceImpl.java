@@ -15,7 +15,6 @@ import com.cordilleracoffee.product.infrastructure.dto.saveproduct.TagDto;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -36,7 +35,7 @@ public class CreateProductServiceImpl implements CreateProductService {
 
     @Override
     @Transactional
-    public URI createProduct(@Valid CreateProductCommand createProductCommand) {
+    public Long createProduct(@Valid CreateProductCommand createProductCommand) {
 
         CreateProductRequest productRequest = createProductCommand.request();
 
@@ -54,9 +53,7 @@ public class CreateProductServiceImpl implements CreateProductService {
         moveProductImages(productImages, createProductCommand.userId());
         moveVariantImages(domainVariants, createProductCommand.userId());
 
-        productRepository.save(product);
-
-        return URI.create("http://localhost:8080/products/12345");
+        return productRepository.save(product);
     }
 
     private void moveVariantImages(List<Variant> domainVariants, String userId) {

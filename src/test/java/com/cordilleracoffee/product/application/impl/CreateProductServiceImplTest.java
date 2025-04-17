@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -48,27 +47,32 @@ class CreateProductServiceImplTest {
     @Test
     void shouldSaveProduct() {
 
+
+        doNothing().when(productService).validateProduct(anyString(), anyString(), anyString());
         when(imageRepository.getTemporalImages(anyString())).thenReturn(Map.of(
                 "b08ee4b0-22bb-446c-bd33-0343a77e9b11", new TemporalImage("b08ee4b0-22bb-446c-bd33-0343a77e9b11",
-                        "other", "url", "user-123")
+                        "other", "url", "user-123"),
+                "5f52676b-2056-4da5-9d23-5f78c88409f2", new TemporalImage("5f52676b-2056-4da5-9d23-5f78c88409f2",
+                        "img", "url", "user-123")
         ));
-
         when(productService.createProduct(any())).thenReturn(TestDataFactory.validProduct());
-
+        when(fileStorageRepository.changeImageLocation(anyString(), anyString(), anyString(), anyString()))
+                .thenReturn("final/location/img.png");
+        when(productRepository.save(any())).thenReturn(12345L);
 
         CreateProductRequest productRequest = TestDataFactory.validCreateProductRequest();
 
-        URI uri = createProductService.createProduct(
+        Long productId = createProductService.createProduct(
                 new CreateProductCommand(productRequest, "user-123",
                         List.of(UserRole.SELLER))
         );
 
-        assertThat(uri).isEqualTo(URI.create("http://localhost:8080/products/12345"));
+        assertThat(productId).isEqualTo(12345L);
 
         verify(productService).validateProduct(anyString(), anyString(), anyString());
         verify(productService).createProduct(any());
 
-        verify(fileStorageRepository, atLeastOnce()).changeImageLocation(eq("temp"), eq("product-assets"), anyString(), eq("user-123"));
+        verify(fileStorageRepository, atLeastOnce()).changeImageLocation(eq("temp"), eq("product-assets"), anyString(), anyString());
         verify(productRepository).save(any());
     }
 

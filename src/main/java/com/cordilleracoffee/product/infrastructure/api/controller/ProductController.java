@@ -12,7 +12,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -45,7 +47,14 @@ class ProductController {
 
         CreateProductCommand command = new CreateProductCommand(createProductRequest, userId, userRoles);
 
-        return ResponseEntity.created(createProductService.createProduct(command))
+        Long productId = createProductService.createProduct(command);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(productId)
+                .toUri();
+
+        return ResponseEntity.created(location)
                 .build();
     }
 }
