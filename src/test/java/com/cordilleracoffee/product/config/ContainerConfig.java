@@ -14,15 +14,17 @@ public abstract class ContainerConfig {
     @Container
     private static final GenericContainer<?> AZURITE_CONTAINER = new GenericContainer<>(
             DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:latest"))
-            .withExposedPorts(10000, 10001, 10002);
+            .withExposedPorts(10000, 10001, 10002)
+            .withReuse(true);
 
     @Container
-    static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7-alpine"));
+    static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7-alpine"))
+            .withReuse(true);
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:16-alpine"
-    );
+    ).withReuse(true);
 
     @DynamicPropertySource
     static void setAzureStorageProperties(DynamicPropertyRegistry registry) {
