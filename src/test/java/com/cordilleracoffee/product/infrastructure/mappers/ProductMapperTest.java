@@ -4,6 +4,8 @@ import com.cordilleracoffee.product.domain.model.Product;
 import com.cordilleracoffee.product.utils.TestDataFactory;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ProductMapperTest {
@@ -14,6 +16,7 @@ class ProductMapperTest {
     void shouldMapProductCorrectly() {
 
         Product product = TestDataFactory.validProduct();
+        product.setVariants(Collections.emptySet());
 
         var actualEntity = productMapper.toJpaEntity(product);
 
@@ -22,7 +25,6 @@ class ProductMapperTest {
         assertThat(actualEntity.getDescription()).isEqualTo(product.getDescription());
         assertThat(actualEntity.getSku()).isEqualTo(product.getSku().sku());
         assertThat(actualEntity.getSellerId()).isEqualTo(product.getSellerId());
-        assertThat(actualEntity.getStock()).isEqualTo(product.getStock().amount());
         assertThat(actualEntity.getStatus()).isEqualTo(product.getStatus().toString());
         assertThat(actualEntity.getCurrency()).isEqualTo(product.getBasePrice().currency());
         assertThat(actualEntity.getBasePrice()).isEqualTo(product.getBasePrice().amount());

@@ -16,7 +16,6 @@ public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sku", source = "sku.sku")
-    @Mapping(target = "stock", source = "stock.amount")
     @Mapping(target = "currency", source = "basePrice.currency")
     @Mapping(target = "basePrice", source = "basePrice.amount")
     @Mapping(target = "category", ignore = true)

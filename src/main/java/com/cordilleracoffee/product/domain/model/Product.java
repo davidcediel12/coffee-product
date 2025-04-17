@@ -117,6 +117,10 @@ public class Product {
         return tagIds;
     }
 
+    public void setVariants(Set<Variant> variants) {
+        this.variants = variants;
+    }
+
     public static class Builder {
 
         private Long id;

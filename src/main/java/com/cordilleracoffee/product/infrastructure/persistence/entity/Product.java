@@ -29,8 +29,6 @@ public class Product {
     private String sku;
 
 
-    private Long stock;
-
     private String status;
 
     private String currency;
@@ -94,16 +92,6 @@ public class Product {
         this.sku = sku;
     }
 
-
-    public Long getStock() {
-
-        
-        return stock;
-    }
-
-    public void setStock(Long stock) {
-        this.stock = stock;
-    }
 
     public String getStatus() {
         return status;

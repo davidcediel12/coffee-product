@@ -52,7 +52,14 @@ public class TestDataFactory {
                         "currency": "USD"
                       },
                       "isPrimary": true,
-                      "sku": "CAF-2500-MR"
+                      "sku": "CAF-2500-MR",
+                      "images": [
+                          {
+                            "id": "5f52676b-2056-4da5-9d23-5f78c88409f2",
+                            "isPrimary": true,
+                            "displayOrder": 2
+                          }
+                        ]
                     }
                   ],
                   "tags": [
