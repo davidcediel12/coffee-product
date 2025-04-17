@@ -1,6 +1,7 @@
 package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
+import com.cordilleracoffee.product.CreateProductService;
 import com.cordilleracoffee.product.application.UploadImageService;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequests;
@@ -38,6 +39,9 @@ class GenerateImageUrlControllerTest {
 
     @MockitoBean
     UploadImageService uploadImageService;
+
+    @MockitoBean
+    CreateProductService createProductService;
 
 
     @Test

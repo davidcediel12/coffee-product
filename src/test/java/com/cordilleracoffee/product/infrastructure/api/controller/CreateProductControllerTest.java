@@ -1,15 +1,18 @@
 package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
+import com.cordilleracoffee.product.CreateProductService;
 import com.cordilleracoffee.product.application.UploadImageService;
 import com.cordilleracoffee.product.utils.TestDataFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,13 +33,15 @@ class CreateProductControllerTest {
     @MockitoBean
     UploadImageService uploadImageService;
 
+    @MockitoBean
+    CreateProductService createProductService;
+
 
     @Test
     void shouldCreateProduct() throws Exception {
 
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(TestDataFactory.validCreateProductRequestString()))
                 .andExpect(status().isCreated());
     }
@@ -47,8 +52,7 @@ class CreateProductControllerTest {
         var productRequest = TestDataFactory.validCreateProductRequestMap();
         productRequest.remove("name");
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isBadRequest());
     }
@@ -60,8 +64,7 @@ class CreateProductControllerTest {
         var productRequest = TestDataFactory.validCreateProductRequestMap();
         productRequest.put("name", "");
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isBadRequest());
     }
@@ -73,8 +76,7 @@ class CreateProductControllerTest {
         var productRequest = TestDataFactory.validCreateProductRequestMap();
         productRequest.put("description", "");
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isBadRequest());
     }
@@ -86,8 +88,7 @@ class CreateProductControllerTest {
         var productRequest = TestDataFactory.validCreateProductRequestMap();
         productRequest.remove("category");
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isBadRequest());
     }
@@ -99,8 +100,7 @@ class CreateProductControllerTest {
         var productRequest = TestDataFactory.validCreateProductRequestMap();
         productRequest.put("images", Collections.emptyList());
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isBadRequest());
     }
@@ -112,9 +112,15 @@ class CreateProductControllerTest {
         var productRequest = TestDataFactory.validCreateProductRequestMap();
         productRequest.put("basePrice", Map.of("amount", -1, "currency", "USD"));
 
-        mockMvc.perform(post("/v1/products")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(createProductPost()
                         .content(objectMapper.writeValueAsString(productRequest)))
                 .andExpect(status().isBadRequest());
+    }
+
+    private static @NotNull MockHttpServletRequestBuilder createProductPost() {
+        return post("/v1/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("App-User-ID", "user-123")
+                .header("App-User-Roles", "SELLER");
     }
 }

@@ -26,6 +26,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -62,6 +63,10 @@ class UploadImageE2ETest {
     @Container
     static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7-alpine"));
 
+    @Container
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+            "postgres:16-alpine"
+    );
 
     @DynamicPropertySource
     static void setAzureStorageProperties(DynamicPropertyRegistry registry) {
@@ -74,6 +79,9 @@ class UploadImageE2ETest {
 
         registry.add("spring.data.redis.host", redis::getRedisHost);
         registry.add("spring.data.redis.port", redis::getRedisPort);
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
     }
 
 
