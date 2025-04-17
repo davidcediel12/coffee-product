@@ -99,7 +99,7 @@ public class CreateProductServiceImpl implements CreateProductService {
             for (var variantImage : variant.images()) {
 
                 if (!imageMap.containsKey(variantImage.id().toString())) {
-                    throw new InvalidProductException("There is no image with id " + variantImage.id());
+                    throw new InvalidProductException("There is temporal image ids that are not present in the system " + variantImage.id());
                 }
 
                 TemporalImage temporalImage = imageMap.get(variantImage.id().toString());
@@ -153,7 +153,7 @@ public class CreateProductServiceImpl implements CreateProductService {
         Money productBasePrice = null;
 
         if (productRequest.basePrice() != null) {
-            new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency());
+            productBasePrice = new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency());
         }
         return new CreateProduct(
                 createProductCommand.userId(), productRequest.name(),
