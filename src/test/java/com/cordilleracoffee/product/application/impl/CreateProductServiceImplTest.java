@@ -91,6 +91,9 @@ class CreateProductServiceImplTest {
         assertThrows(InvalidProductException.class, () -> createProductService.createProduct(
                 createProductCommand
         ));
+
+        verifyNoInteractions(productRepository);
+        verifyNoInteractions(fileStorageRepository);
     }
 
 
