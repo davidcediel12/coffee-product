@@ -19,7 +19,11 @@ public class TestDataFactory {
     private TestDataFactory() {
     }
 
-
+    /**
+     * Create a valid product request accepted by the controller.
+     * It does not guarantee that the product will be accepted by the services
+     * @return product request accepted by the controller
+     */
     public static String validCreateProductRequestString() {
         return """
                 {
@@ -72,6 +76,11 @@ public class TestDataFactory {
                 """;
     }
 
+    /**
+     * Create a valid product request accepted by the controller.
+     * It does not guarantee that the product will be accepted by the services
+     * @return product request accepted by the controller
+     */
     public static CreateProductRequest validCreateProductRequest() {
         try {
             return objectMapper.readValue(validCreateProductRequestString(), CreateProductRequest.class);
