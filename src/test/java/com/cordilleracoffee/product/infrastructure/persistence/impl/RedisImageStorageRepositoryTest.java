@@ -60,7 +60,8 @@ class RedisImageStorageRepositoryTest {
         TemporalImage expectedImage = new TemporalImage("1", "image1.png", "20921", userId);
 
         when(tempImageTemplate.opsForHash()).thenReturn(hashOperations);
-        when(hashOperations.entries(anyString())).thenReturn(Map.of("1", expectedImage));
+        when(hashOperations.entries(anyString())).thenReturn(Map.of("1", new TempImage(
+                expectedImage.id(), expectedImage.name(), expectedImage.url(), userId)));
 
 
         Map<String, TemporalImage> images = redisImageRepository.getTemporalImages(userId);
