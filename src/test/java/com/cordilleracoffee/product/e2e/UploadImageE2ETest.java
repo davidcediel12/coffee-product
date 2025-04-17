@@ -5,12 +5,12 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobItem;
+import com.cordilleracoffee.product.config.ContainerConfig;
 import com.cordilleracoffee.product.infrastructure.dto.ApiErrorResponse;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequests;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.SignedUrl;
 import com.cordilleracoffee.product.infrastructure.persistence.entity.TempImage;
-import com.redis.testcontainers.RedisContainer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,14 +22,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestTemplate;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class UploadImageE2ETest {
+class UploadImageE2ETest extends ContainerConfig {
 
     private static final String SELLER_ROLE = "SELLER";
     @Autowired
@@ -54,35 +48,6 @@ class UploadImageE2ETest {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
-
-    @Container
-    private static final GenericContainer<?> AZURITE_CONTAINER = new GenericContainer<>(
-            DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:latest"))
-            .withExposedPorts(10000, 10001, 10002);
-
-    @Container
-    static RedisContainer redis = new RedisContainer(DockerImageName.parse("redis:7-alpine"));
-
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:16-alpine"
-    );
-
-    @DynamicPropertySource
-    static void setAzureStorageProperties(DynamicPropertyRegistry registry) {
-
-        String connectionString = String.format("DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;" +
-                "AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;" +
-                "BlobEndpoint=http://127.0.0.1:%d/devstoreaccount1;", AZURITE_CONTAINER.getMappedPort(10000));
-
-        registry.add("spring.cloud.azure.storage.blob.connection-string", () -> connectionString);
-
-        registry.add("spring.data.redis.host", redis::getRedisHost);
-        registry.add("spring.data.redis.port", redis::getRedisPort);
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
 
 
     @BeforeEach
