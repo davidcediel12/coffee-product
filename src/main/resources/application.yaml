@@ -15,3 +15,17 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      format_sql: true
+      show-sql: true
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/cordillera-coffee
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  output:
+    ansi:
+      enabled: ALWAYS
