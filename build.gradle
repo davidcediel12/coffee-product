@@ -5,6 +5,10 @@ plugins {
 	id 'org.springframework.cloud.contract' version '4.2.1'
 }
 
+contracts {
+	baseClassForTests = 'com.cordilleracoffee.product.messaging.BaseTestClass'
+	testFramework = 'JUnit5'
+}
 group = 'com.cordilleracoffee'
 version = '0.0.1-SNAPSHOT'
 
@@ -59,10 +63,11 @@ dependencies {
 	developmentOnly 'com.azure.spring:spring-cloud-azure-docker-compose'
 
 	// Contract test
-	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+//	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
 	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 
 	// Test
+	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testImplementation 'com.redis:testcontainers-redis:2.2.2'

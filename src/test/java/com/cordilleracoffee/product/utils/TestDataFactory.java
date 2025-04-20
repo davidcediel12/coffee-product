@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,6 +110,7 @@ public class TestDataFactory {
                 .basePrice(new Money(BigDecimal.TEN, "EUR"))
                 .stock(new Stock(10L))
                 .status(ProductStatus.AVAILABLE)
+                .variants(Collections.emptySet())
                 .build();
 
     }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaService implements MessageService {
 
-    private static Logger log = LoggerFactory.getLogger(KafkaService.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(KafkaService.class.getName());
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
