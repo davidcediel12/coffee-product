@@ -9,6 +9,7 @@ import com.cordilleracoffee.product.domain.repository.ImageRepository;
 import com.cordilleracoffee.product.domain.repository.ProductRepository;
 import com.cordilleracoffee.product.domain.services.ProductService;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
+import com.cordilleracoffee.product.infrastructure.messaging.MessageService;
 import com.cordilleracoffee.product.utils.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,9 @@ class CreateProductServiceImplTest {
 
     @Mock
     ImageRepository imageRepository;
+
+    @Mock
+    MessageService messageService;
 
     @Mock
     FileStorageRepository fileStorageRepository;
@@ -74,6 +78,7 @@ class CreateProductServiceImplTest {
 
         verify(fileStorageRepository, atLeastOnce()).changeImageLocation(eq("temp"), eq("product-assets"), anyString(), anyString());
         verify(productRepository).save(any());
+        verify(messageService).sendNewProduct(any());
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.cordilleracoffee.product.domain.repository.ProductRepository;
 import com.cordilleracoffee.product.domain.services.ProductService;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.TagDto;
+import com.cordilleracoffee.product.infrastructure.messaging.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +26,14 @@ public class CreateProductServiceImpl implements CreateProductService {
     private final ImageRepository imageRepository;
     private final FileStorageRepository fileStorageRepository;
     private final ProductRepository productRepository;
+    private final MessageService messageService;
 
-    public CreateProductServiceImpl(ProductService productService, ImageRepository imageRepository, FileStorageRepository fileStorageRepository, ProductRepository productRepository) {
+    public CreateProductServiceImpl(ProductService productService, ImageRepository imageRepository, FileStorageRepository fileStorageRepository, ProductRepository productRepository, MessageService messageService) {
         this.productService = productService;
         this.imageRepository = imageRepository;
         this.fileStorageRepository = fileStorageRepository;
         this.productRepository = productRepository;
+        this.messageService = messageService;
     }
 
     @Override
@@ -53,7 +56,11 @@ public class CreateProductServiceImpl implements CreateProductService {
         moveProductImages(productImages, createProductCommand.userId());
         moveVariantImages(domainVariants, createProductCommand.userId());
 
-        return productRepository.save(product);
+        Long productId = productRepository.save(product);
+        product.setId(productId);
+
+        messageService.sendNewProduct(product);
+        return productId;
     }
 
     private void moveVariantImages(List<Variant> domainVariants, String userId) {

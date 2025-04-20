@@ -69,6 +69,16 @@ public class Product {
 
     }
 
+    public void setId(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Product must have an id");
+        }
+        if (id < 0) {
+            throw new IllegalArgumentException("Product must have a positive id");
+        }
+        this.id = id;
+    }
+
     public String getSellerId() {
         return sellerId;
     }
