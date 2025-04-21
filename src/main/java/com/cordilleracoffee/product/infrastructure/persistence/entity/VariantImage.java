@@ -35,7 +35,7 @@ public class VariantImage {
         this.url = url;
     }
 
-    public Boolean getPrimary() {
+    public Boolean isPrimary() {
         return isPrimary;
     }
 

@@ -34,7 +34,7 @@ public class ProductImage {
         this.url = url;
     }
 
-    public Boolean getPrimary() {
+    public Boolean isPrimary() {
         return isPrimary;
     }
 

@@ -1,6 +1,7 @@
 package com.cordilleracoffee.product.infrastructure.mappers;
 
 import com.cordilleracoffee.product.domain.model.Product;
+import com.cordilleracoffee.product.infrastructure.persistence.entity.ProductImage;
 import com.cordilleracoffee.product.utils.TestDataFactory;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,9 @@ class ProductMapperTest {
         assertThat(actualEntity.getStatus()).isEqualTo(product.getStatus().toString());
         assertThat(actualEntity.getCurrency()).isEqualTo(product.getBasePrice().currency());
         assertThat(actualEntity.getBasePrice()).isEqualTo(product.getBasePrice().amount());
+        ProductImage productImage = actualEntity.getImages().stream().findFirst().orElseThrow();
+        com.cordilleracoffee.product.domain.model.ProductImage domainImage = product.getImages().stream().findFirst().orElseThrow();
+        assertThat(productImage.isPrimary()).isEqualTo(domainImage.isPrimary());
 
 
     }

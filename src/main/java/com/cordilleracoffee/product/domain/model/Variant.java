@@ -1,5 +1,7 @@
 package com.cordilleracoffee.product.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -9,6 +11,7 @@ public class Variant {
     private String description;
     private Stock stock;
     private Money basePrice;
+    @JsonProperty("isPrimary")
     private Boolean isPrimary;
     private Sku sku;
     private Set<VariantImage> variantImages;
@@ -47,7 +50,8 @@ public class Variant {
         return basePrice;
     }
 
-    public Boolean getPrimary() {
+    @JsonProperty("isPrimary")
+    public Boolean isPrimary() {
         return isPrimary;
     }
 

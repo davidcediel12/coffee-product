@@ -1,9 +1,12 @@
 package com.cordilleracoffee.product.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public abstract class BaseImage {
     private Long id;
     private String name;
     private String url;
+    @JsonProperty("isPrimary")
     private Boolean isPrimary;
     private Integer displayOrder;
 
@@ -58,10 +61,12 @@ public abstract class BaseImage {
         this.url = url;
     }
 
-    public Boolean getPrimary() {
+    @JsonProperty("isPrimary")
+    public Boolean isPrimary() {
         return isPrimary;
     }
 
+    @JsonProperty("isPrimary")
     public void setPrimary(Boolean primary) {
         isPrimary = primary;
     }
