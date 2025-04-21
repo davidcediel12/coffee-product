@@ -58,6 +58,9 @@ public abstract class BaseTestClass {
     @ServiceConnection
     static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"));
 
+    /**
+     * Used by shouldSendProductWithoutVariants.groovy contract
+     */
     public void triggerProductWithoutVariantsCreated() {
         Product product = TestDataFactory.validProduct();
 
@@ -65,6 +68,9 @@ public abstract class BaseTestClass {
         kafkaService.sendNewProduct(product);
     }
 
+    /**
+     * Used by shouldSendProductWithVariants.groovy
+     */
     public void triggerProductWithVariantsCreated() {
         Product product = TestDataFactory.validProduct();
 
