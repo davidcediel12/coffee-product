@@ -3,15 +3,13 @@ package com.cordilleracoffee.product.messaging;
 
 import com.cordilleracoffee.product.domain.model.Product;
 import com.cordilleracoffee.product.infrastructure.messaging.impl.KafkaService;
-import com.cordilleracoffee.product.infrastructure.persistence.*;
 import com.cordilleracoffee.product.utils.TestDataFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
@@ -29,7 +27,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.KafkaContainer;
@@ -45,30 +42,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest(properties = "spring.profiles.active=test",
-        webEnvironment = SpringBootTest.WebEnvironment.NONE)
+        webEnvironment = SpringBootTest.WebEnvironment.NONE,
+        classes = {
+                KafkaService.class, BaseTestClass.TestConfig.class,
+                KafkaAutoConfiguration.class, ObjectMapper.class
+        })
 @Testcontainers
 @AutoConfigureMessageVerifier
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public abstract class BaseTestClass {
-
-
-    @MockitoBean
-    ProductJpaRepository productJpaRepository;
-
-    @MockitoBean
-    TagJpaRepository tagJpaRepository;
-
-    @MockitoBean
-    VariantImageJpaRepository variantImageJpaRepository;
-
-    @MockitoBean
-    VariantJpaRepository variantJpaRepository;
-
-    @MockitoBean
-    CategoryJpaRepository categoryJpaRepository;
-
-    @MockitoBean
-    ProductImageJpaRepository productImageJpaRepository;
 
     @Autowired
     private KafkaService kafkaService;
