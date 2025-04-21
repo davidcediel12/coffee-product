@@ -1,39 +1,31 @@
-
+package contracts
 
 import org.springframework.cloud.contract.spec.Contract
+import static org.springframework.cloud.contract.spec.internal.BodyMatchers.*
+
 
 
 Contract.make {
-    name("shouldSendProductCreatedEvent")
-    label("product_created_event")
+    name("shouldSendProductCreatedEventWithVariant")
+    label("product_created_event_variant")
     description("Sends a ProductCreated event to Kafka")
 
     input {
-        triggeredBy("triggerProductCreated()")
+        triggeredBy("triggerProductWithVariantsCreated()")
     }
 
     outputMessage {
         sentTo("product")
         headers {
-            header("contentType", applicationJsonUtf8())
+            header("contentType", applicationJson())
         }
         body(
-                productId: anyNumber(),
+                id: anyNumber(),
                 sellerId: anyNonBlankString(),
                 name: anyNonBlankString(),
                 description: anyNonBlankString(),
-                sku: [
-                        sku: anyNonBlankString()
-                ],
-                stock: [
-                        amount: anyPositiveInt()
-                ],
                 status: anyOf("AVAILABLE", "HIDDEN", "OUT_OF_STOCK"),
                 categoryId: anyNumber(),
-                basePrice: [
-                        amount : anyDouble(),
-                        currency: anyAlphaUnicode()
-                ],
                 images: [
                         [
                                 id          : anyNumber(),
@@ -48,7 +40,7 @@ Contract.make {
                                 name         : anyNonBlankString(),
                                 description  : anyNonBlankString(),
                                 stock        : [amount: anyPositiveInt()],
-                                basePrice    : [amount: anyDouble(), currency: anyAlphaUnicode()],
+                                basePrice    : [amount: anyNumber(), currency: anyAlphaUnicode()],
                                 isPrimary    : anyBoolean(),
                                 sku          : [sku: anyNonBlankString()],
                                 variantImages: [
@@ -62,11 +54,7 @@ Contract.make {
                                 ]
                         ]
                 ],
-                tagIds: [
-                        [
-                                id : anyNumber()
-                        ]
-                ]
+                tagIds: [$(anyNumber())]
         )
     }
 }

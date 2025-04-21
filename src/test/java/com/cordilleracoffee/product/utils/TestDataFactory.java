@@ -111,6 +111,7 @@ public class TestDataFactory {
                 .stock(new Stock(10L))
                 .status(ProductStatus.AVAILABLE)
                 .variants(Collections.emptySet())
+                .tagIds(Set.of(1L, 3L, 4L))
                 .build();
 
     }
