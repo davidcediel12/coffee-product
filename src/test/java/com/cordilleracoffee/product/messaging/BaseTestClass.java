@@ -88,7 +88,7 @@ public abstract class BaseTestClass {
         Product product = TestDataFactory.validProduct();
 
         product.setId(2L);
-        product.setVariants(Set.of(TestDataFactory.validProductVariant()));
+        product.createVariants(Set.of(TestDataFactory.validProductVariant()));
 
         kafkaService.sendNewProduct(product);
     }

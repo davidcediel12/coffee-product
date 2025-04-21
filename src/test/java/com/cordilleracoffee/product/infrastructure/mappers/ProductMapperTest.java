@@ -17,7 +17,7 @@ class ProductMapperTest {
     void shouldMapProductCorrectly() {
 
         Product product = TestDataFactory.validProduct();
-        product.setVariants(Collections.emptySet());
+        product.createVariants(Collections.emptySet());
 
         var actualEntity = productMapper.toJpaEntity(product);
 

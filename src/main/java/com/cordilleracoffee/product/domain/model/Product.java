@@ -127,9 +127,18 @@ public class Product {
         return tagIds;
     }
 
-    public void setVariants(Set<Variant> variants) {
+    public void createVariants(Set<Variant> variants) {
         this.variants = variants;
+
+        if(this.variants == null || this.variants.isEmpty()){
+            return;
+        }
+
+        stock = null;
+        sku = null;
+        basePrice = null;
     }
+
 
     public static class Builder {
 
