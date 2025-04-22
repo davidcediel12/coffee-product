@@ -2,11 +2,10 @@ package contracts
 
 import org.springframework.cloud.contract.spec.Contract
 
-
 Contract.make {
     name("shouldSendProductCreatedEventWithVariant")
     label("product_created_event_variant")
-    description("Sends a ProductCreated event to Kafka with matchers for producer and specific values for consumer")
+    description("Sends a ProductCreated event to Kafka with consumer values")
 
     input {
         triggeredBy("triggerProductWithVariantsCreated()")
@@ -18,42 +17,41 @@ Contract.make {
             header("contentType", applicationJson())
         }
         body(
-                id: $(consumer(12345), producer(anyNumber())),
-                sellerId: $(consumer("seller-001"), producer(anyNonBlankString())),
-                name: $(consumer("Premium Wireless Headphones"), producer(anyNonBlankString())),
-                description: $(consumer("High-quality wireless headphones with noise cancellation"), producer(anyNonBlankString())),
-                status: $(consumer("AVAILABLE"), producer(anyOf("AVAILABLE", "HIDDEN", "OUT_OF_STOCK"))),
-                categoryId: $(consumer(678), producer(anyNumber())),
+                id: 12345,
+                sellerId: "seller-001",
+                name: "Premium Wireless Headphones",
+                description: "High-quality wireless headphones with noise cancellation",
+                status: "AVAILABLE",
+                categoryId: 678,
                 images: [
                         [
-                                id          : $(consumer(1), producer(anyNumber())),
-                                name        : $(consumer("headphones-main"), producer(anyNonBlankString())),
-                                url         : $(consumer("https://example.com/images/headphones-main.jpg"), producer(anyUrl())),
-                                isPrimary   : $(consumer(true), producer(anyBoolean())),
-                                displayOrder: $(consumer(1), producer(anyNumber()))
+                                id          : 1,
+                                name        : "headphones-main",
+                                url         : "https://example.com/images/headphones-main.jpg",
+                                isPrimary   : true,
+                                displayOrder: 1
                         ]
                 ],
                 variants: [
                         [
-                                name         : $(consumer("Black Edition"), producer(anyNonBlankString())),
-                                description  : $(consumer("Premium headphones in black color"), producer(anyNonBlankString())),
-                                stock        : [amount: $(consumer(100), producer(anyPositiveInt()))],
-                                basePrice    : [amount: $(consumer(199.99), producer(anyNumber())),
-                                                currency: $(consumer("USD"), producer(anyAlphaUnicode()))],
-                                isPrimary    : $(consumer(true), producer(anyBoolean())),
-                                sku          : [sku: $(consumer("HP-BLK-001"), producer(anyNonBlankString()))],
+                                name         : "Black Edition",
+                                description  : "Premium headphones in black color",
+                                stock        : [amount: 100],
+                                basePrice    : [amount: 199.99, currency: "USD"],
+                                isPrimary    : true,
+                                sku          : [sku: "HP-BLK-001"],
                                 variantImages: [
                                         [
-                                                id          : $(consumer(2), producer(anyNumber())),
-                                                name        : $(consumer("headphones-black"), producer(anyNonBlankString())),
-                                                url         : $(consumer("https://example.com/images/headphones-black.jpg"), producer(anyUrl())),
-                                                isPrimary   : $(consumer(true), producer(anyBoolean())),
-                                                displayOrder: $(consumer(1), producer(anyNumber()))
+                                                id          : 2,
+                                                name        : "headphones-black",
+                                                url         : "https://example.com/images/headphones-black.jpg",
+                                                isPrimary   : true,
+                                                displayOrder: 1
                                         ]
                                 ]
                         ]
                 ],
-                tagIds: $(consumer([101, 205, 307]), producer([$(anyNumber())]))
+                tagIds: [101, 205, 307]
         )
     }
 }

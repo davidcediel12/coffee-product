@@ -5,7 +5,7 @@ import org.springframework.cloud.contract.spec.Contract
 Contract.make {
     name("shouldSendProductCreatedEventWithoutVariant")
     label("product_created_event_no_variant")
-    description("Sends a ProductCreated event to Kafka with matchers for producer and specific values for consumer")
+    description("Sends a ProductCreated event to Kafka with consumer values")
 
     input {
         triggeredBy("triggerProductWithoutVariantsCreated()")
@@ -17,33 +17,33 @@ Contract.make {
             header("contentType", applicationJson())
         }
         body(
-                id: $(consumer(12346), producer(anyNumber())),
-                sellerId: $(consumer("seller-002"), producer(anyNonBlankString())),
-                name: $(consumer("Classic Wired Headphones"), producer(anyNonBlankString())),
-                description: $(consumer("High-quality wired headphones with crisp sound"), producer(anyNonBlankString())),
+                id: anyPositiveInt(),
+                sellerId: "seller-002",
+                name: "Classic Wired Headphones",
+                description: "High-quality wired headphones with crisp sound",
                 sku: [
-                        sku: $(consumer("HP-WRD-001"), producer(anyNonBlankString()))
+                        sku: "HP-WRD-001"
                 ],
                 stock: [
-                        amount: $(consumer(50), producer(anyPositiveInt()))
+                        amount: 50
                 ],
-                status: $(consumer("AVAILABLE"), producer(anyOf("AVAILABLE", "HIDDEN", "OUT_OF_STOCK"))),
-                categoryId: $(consumer(679), producer(anyNumber())),
+                status: "AVAILABLE",
+                categoryId: 679,
                 basePrice: [
-                        amount : $(consumer(99.99), producer(anyNumber())),
-                        currency: $(consumer("USD"), producer(anyAlphaUnicode()))
+                        amount : 99.99,
+                        currency: "USD"
                 ],
                 images: [
                         [
-                                id          : $(consumer(3), producer(anyNumber())),
-                                name        : $(consumer("wired-headphones-main"), producer(anyNonBlankString())),
-                                url         : $(consumer("https://example.com/images/wired-headphones.jpg"), producer(anyUrl())),
-                                isPrimary   : $(consumer(true), producer(anyBoolean())),
-                                displayOrder: $(consumer(1), producer(anyNumber()))
+                                id          : 3,
+                                name        : "wired-headphones-main",
+                                url         : "https://example.com/images/wired-headphones.jpg",
+                                isPrimary   : true,
+                                displayOrder: 1
                         ]
                 ],
                 variants: [],
-                tagIds: $(consumer([102, 206]), producer([anyNumber()]))
+                tagIds: [102, 206]
         )
     }
 }
