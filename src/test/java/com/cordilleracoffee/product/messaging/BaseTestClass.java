@@ -1,9 +1,8 @@
 package com.cordilleracoffee.product.messaging;
 
 
-import com.cordilleracoffee.product.domain.model.Product;
+import com.cordilleracoffee.product.domain.model.*;
 import com.cordilleracoffee.product.infrastructure.messaging.impl.KafkaService;
-import com.cordilleracoffee.product.utils.TestDataFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +32,8 @@ import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -58,13 +59,32 @@ public abstract class BaseTestClass {
     @ServiceConnection
     static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"));
 
+
+    Product.Builder productBuilder = new Product.Builder("Coffee Maker",
+            "High-quality coffee maker",
+            "seller-001",
+            new Sku("CM-BLK-001"), 678L,
+            Set.of(
+                    new ProductImage(1L, "coffee-maker-main", 1, true, "https://example.com/images/coffee-maker-main.jpg")
+            )
+    );
+
+
     /**
      * Used by shouldSendProductWithoutVariants.groovy contract
      */
     public void triggerProductWithoutVariantsCreated() {
-        Product product = TestDataFactory.validProduct();
 
-        product.setId(2L);
+        var product = productBuilder
+                .id(10L)
+                .basePrice(new Money(BigDecimal.valueOf(99.99), "USD"))
+                .stock(new Stock(50L))
+                .status(ProductStatus.AVAILABLE)
+                .variants(Collections.emptySet())
+                .tagIds(Set.of(101L, 205L, 307L))
+                .build();
+
+
         kafkaService.sendNewProduct(product);
     }
 
@@ -72,10 +92,19 @@ public abstract class BaseTestClass {
      * Used by shouldSendProductWithVariants.groovy
      */
     public void triggerProductWithVariantsCreated() {
-        Product product = TestDataFactory.validProduct();
 
-        product.setId(2L);
-        product.createVariants(Set.of(TestDataFactory.validProductVariant()));
+        var variant = new Variant("Black Edition", "Premium coffee maker in black color",
+                new Stock(100L), new Money(BigDecimal.valueOf(199.99), "USD"), true,
+                new Sku("CM-BLK-001"), Set.of(new VariantImage(2L, "coffee-maker-black", 1, true,
+                "https://example.com/images/coffee-maker-black.jpg")));
+
+
+        Product product = productBuilder
+                .id(10L)
+                .status(ProductStatus.AVAILABLE)
+                .variants(Set.of(variant))
+                .tagIds(Set.of(101L, 205L, 307L))
+                .build();
 
         kafkaService.sendNewProduct(product);
     }

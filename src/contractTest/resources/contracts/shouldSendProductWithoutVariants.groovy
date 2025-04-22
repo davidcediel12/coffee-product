@@ -18,32 +18,32 @@ Contract.make {
         }
         body(
                 id: anyPositiveInt(),
-                sellerId: "seller-002",
-                name: "Classic Wired Headphones",
-                description: "High-quality wired headphones with crisp sound",
+                sellerId: "seller-001",
+                name: "Coffee Maker",
+                description: "High-quality coffee maker",
                 sku: [
-                        sku: "HP-WRD-001"
+                        sku: "CM-BLK-001"
                 ],
                 stock: [
                         amount: 50
                 ],
                 status: "AVAILABLE",
-                categoryId: 679,
+                categoryId: 678,
                 basePrice: [
                         amount : 99.99,
                         currency: "USD"
                 ],
                 images: [
                         [
-                                id          : 3,
-                                name        : "wired-headphones-main",
-                                url         : "https://example.com/images/wired-headphones.jpg",
+                                id          : 1,
+                                name        : "coffee-maker-main",
+                                url         : "https://example.com/images/coffee-maker-main.jpg",
                                 isPrimary   : true,
                                 displayOrder: 1
                         ]
                 ],
                 variants: [],
-                tagIds: [102, 206]
+                tagIds: [101, 205, 307]
         )
     }
 }
