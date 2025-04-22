@@ -21,14 +21,13 @@ Contract.make {
                 sellerId: "seller-001",
                 name: "Coffee Maker",
                 description: "High-quality coffee maker",
-                sku: [
-                        sku: "CM-BLK-001"
-                ],
-                stock: [
-                        amount: 50
-                ],
+                sku:  "CM-BLK-001",
+                stock:  50,
                 status: "AVAILABLE",
-                categoryId: 678,
+                category: [
+                        id : 678,
+                        name : "Machines"
+                ],
                 basePrice: [
                         amount : 99.99,
                         currency: "USD"
@@ -43,7 +42,17 @@ Contract.make {
                         ]
                 ],
                 variants: [],
-                tagIds: [101, 205, 307]
+                tags: [
+                        [
+                            id : 101,
+                            name: "electric",
+                            tagType: [
+                                    id: 11,
+                                    name: "machine type",
+
+                            ]
+                        ]
+                ]
         )
     }
 }
