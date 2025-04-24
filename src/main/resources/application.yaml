@@ -26,6 +26,12 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/cordillera-coffee
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+  kafka:
+    bootstrap-servers: ${EVENTHUB_NAMESPACE}.servicebus.windows.net:9093
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="$ConnectionString" password="${EVENTHUB_CONNECTION_STRING}";
   output:
     ansi:
       enabled: ALWAYS
