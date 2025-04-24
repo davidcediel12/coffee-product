@@ -3,6 +3,7 @@ package com.cordilleracoffee.product.application.impl;
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
 import com.cordilleracoffee.product.domain.exception.InvalidProductException;
+import com.cordilleracoffee.product.domain.model.Product;
 import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.model.UserRole;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
@@ -62,7 +63,9 @@ class CreateProductServiceImplTest {
         when(productService.createProduct(any())).thenReturn(TestDataFactory.validProduct());
         when(fileStorageRepository.changeImageLocation(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("final/location/img.png");
-        when(productRepository.save(any())).thenReturn(TestDataFactory.validProduct());
+        Product savedProduct = TestDataFactory.validProduct();
+        savedProduct.setId(12345L);
+        when(productRepository.save(any())).thenReturn(savedProduct);
 
         CreateProductRequest productRequest = TestDataFactory.validCreateProductRequest();
 
