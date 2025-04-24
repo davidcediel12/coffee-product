@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Variant {
+    private Long id;
     private String name;
     private String description;
     private Stock stock;
@@ -17,9 +18,10 @@ public class Variant {
     private Set<VariantImage> variantImages;
 
 
-    public Variant(String name, String description, Stock stock, Money basePrice,
+    public Variant(Long id, String name, String description, Stock stock, Money basePrice,
                    Boolean isPrimary, Sku sku, Set<VariantImage> variantImages) {
 
+        this.id = id;
         this.name = Objects.requireNonNull(name, "name must not be null");
         this.description = Objects.requireNonNull(description, "description must not be null");
         this.stock = Objects.requireNonNull(stock, "stock must not be null");
@@ -32,6 +34,14 @@ public class Variant {
         }
 
         this.variantImages = variantImages;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

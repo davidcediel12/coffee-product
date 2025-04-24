@@ -20,6 +20,7 @@ public interface ProductMapper {
     @Mapping(target = "basePrice", source = "basePrice.amount")
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "tags", ignore = true)
+    @Mapping(target = "variants", ignore = true)
     Product toJpaEntity(com.cordilleracoffee.product.domain.model.Product domainProduct);
 
     @Mapping(target = "id", ignore = true)

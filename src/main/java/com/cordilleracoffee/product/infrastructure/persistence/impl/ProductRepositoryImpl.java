@@ -35,7 +35,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Long save(Product product) {
+    public Product save(Product product) {
         var persistentProduct = productMapper.toJpaEntity(product);
 
         persistentProduct.setCategory(categoryJpaRepository.getReferenceById(product.getCategoryId()));
@@ -49,6 +49,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
 
         var savedProduct = productJpaRepository.save(persistentProduct);
+        product.setId(savedProduct.getId());
 
         for (var image : persistentProduct.getImages()) {
             image.setProduct(savedProduct);
@@ -56,16 +57,21 @@ public class ProductRepositoryImpl implements ProductRepository {
 
         productImageJpaRepository.saveAll(persistentProduct.getImages());
 
-        for (var variant : persistentProduct.getVariants()) {
-            variant.setProduct(savedProduct);
-            var savedVariant = variantJpaRepository.save(variant);
-            for (var image : Optional.ofNullable(variant.getVariantImages()).orElse(Collections.emptySet())) {
+        for (var variant : product.getVariants()) {
+
+            var jpaVariant = productMapper.toJpaEntity(variant);
+
+            jpaVariant.setProduct(savedProduct);
+            var savedVariant = variantJpaRepository.save(jpaVariant);
+
+            variant.setId(savedVariant.getId());
+            for (var image : Optional.ofNullable(jpaVariant.getVariantImages()).orElse(Collections.emptySet())) {
                 image.setVariant(savedVariant);
             }
-            variantImageJpaRepository.saveAll(variant.getVariantImages());
+            variantImageJpaRepository.saveAll(jpaVariant.getVariantImages());
         }
 
-        return savedProduct.getId();
+        return product;
     }
 
     @Override

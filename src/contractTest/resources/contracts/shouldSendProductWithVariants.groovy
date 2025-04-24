@@ -37,6 +37,7 @@ Contract.make {
                 ],
                 variants: [
                         [
+                                id           : anyPositiveInt(),
                                 name         : "Black Edition",
                                 description  : "Premium coffee maker in black color",
                                 stock        :  100,

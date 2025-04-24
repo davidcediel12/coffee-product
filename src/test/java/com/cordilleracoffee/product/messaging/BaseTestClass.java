@@ -12,10 +12,15 @@ import com.cordilleracoffee.product.infrastructure.persistence.entity.TagType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.KafkaFuture;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaConnectionDetails;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
@@ -41,13 +46,15 @@ import org.testcontainers.utility.DockerImageName;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyIterable;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = "spring.profiles.active=test",
@@ -70,6 +77,9 @@ public abstract class BaseTestClass {
     @Autowired
     private KafkaService kafkaService;
 
+    @Autowired
+    KafkaConnectionDetails kafkaConnectionDetails;
+
     @Container
     @ServiceConnection
     static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"));
@@ -85,7 +95,7 @@ public abstract class BaseTestClass {
     );
 
     @BeforeEach
-    void setup() throws InterruptedException {
+    void setup() {
         com.cordilleracoffee.product.infrastructure.persistence.entity.Category category = new com.cordilleracoffee.product.infrastructure.persistence.entity.Category();
         category.setId(678L);
         category.setName("Machines");
@@ -104,7 +114,12 @@ public abstract class BaseTestClass {
         tag.setTagType(tagType);
 
         when(tagJpaRepository.findAllById(anyIterable())).thenReturn(List.of(tag));
-        Thread.sleep(2000); // give time to kafka to start properly
+        // give time to kafka to start properly
+        Awaitility.await()
+                .atMost(30, TimeUnit.SECONDS)
+                .pollDelay(Duration.ofMillis(100))
+                .pollInterval(Duration.ofSeconds(2))
+                .until(() -> isKafkaReady("product"));
     }
 
     /**
@@ -129,7 +144,7 @@ public abstract class BaseTestClass {
      * Used by shouldSendProductWithVariants.groovy
      */
     public void triggerProductWithVariantsCreated() {
-        var variant = new Variant("Black Edition", "Premium coffee maker in black color",
+        var variant = new Variant(10L, "Black Edition", "Premium coffee maker in black color",
                 new Stock(100L), new Money(BigDecimal.valueOf(199.99), "USD"), true,
                 new Sku("CM-BLK-001"), Set.of(new VariantImage(2L, "coffee-maker-black", 1, true,
                 "https://example.com/images/coffee-maker-black.jpg")));
@@ -143,6 +158,22 @@ public abstract class BaseTestClass {
                 .build();
 
         kafkaService.sendNewProduct(product);
+    }
+
+
+    public boolean isKafkaReady(String topicName) {
+        Properties config = new Properties();
+        config.put("bootstrap.servers", kafkaConnectionDetails.getBootstrapServers());
+        try (AdminClient admin = AdminClient.create(config)) {
+
+            ListTopicsResult topics = admin.listTopics();
+            KafkaFuture<Set<String>> names = topics.names();
+
+            Set<String> topicNames = names.get(5, TimeUnit.SECONDS);
+            return topicNames.contains(topicName);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 

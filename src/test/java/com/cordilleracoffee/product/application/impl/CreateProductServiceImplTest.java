@@ -62,7 +62,7 @@ class CreateProductServiceImplTest {
         when(productService.createProduct(any())).thenReturn(TestDataFactory.validProduct());
         when(fileStorageRepository.changeImageLocation(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("final/location/img.png");
-        when(productRepository.save(any())).thenReturn(12345L);
+        when(productRepository.save(any())).thenReturn(TestDataFactory.validProduct());
 
         CreateProductRequest productRequest = TestDataFactory.validCreateProductRequest();
 

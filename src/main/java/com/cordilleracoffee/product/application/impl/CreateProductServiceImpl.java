@@ -56,11 +56,10 @@ public class CreateProductServiceImpl implements CreateProductService {
         moveProductImages(productImages, createProductCommand.userId());
         moveVariantImages(domainVariants, createProductCommand.userId());
 
-        Long productId = productRepository.save(product);
-        product.setId(productId);
+        product = productRepository.save(product);
 
         messageService.sendNewProduct(product);
-        return productId;
+        return product.getId();
     }
 
     private void moveVariantImages(List<Variant> domainVariants, String userId) {
@@ -117,7 +116,7 @@ public class CreateProductServiceImpl implements CreateProductService {
                 variantImages.add(domainVariantImage);
             }
 
-            var domainVariant = new Variant(
+            var domainVariant = new Variant(null,
                     variant.name(), variant.description(),
                     new Stock((long) variant.stock()),
                     new Money(variant.basePrice().amount(), variant.basePrice().currency()),

@@ -118,7 +118,7 @@ public class TestDataFactory {
 
 
     public static @NotNull Variant validProductVariant() {
-        return new Variant("variant1", "desc1",
+        return new Variant(null, "variant1", "desc1",
                 new Stock(10L), new Money(BigDecimal.TEN, "EUR"), true,
                 new Sku("SKU123"), Set.of(new VariantImage(1L, "image", 1, true, "url.com")));
     }
