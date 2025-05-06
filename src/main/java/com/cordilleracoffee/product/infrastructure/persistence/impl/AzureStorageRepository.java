@@ -45,7 +45,7 @@ public class AzureStorageRepository implements FileStorageRepository {
         var signatureValues = generateSasPermissions(OffsetDateTime.now().plusMinutes(1),
                 true, true);
         String sasToken = sourceBlobClient.generateSas(signatureValues);
-        String sourceUrl = sourceBlobClient.getBlobUrl() + "?"  + sasToken;
+        String sourceUrl = sourceBlobClient.getBlobUrl() + "?" + sasToken;
 
         BlobClient destinationBlob = targetContainer.getBlobClient(finalImageName);
 
@@ -63,7 +63,7 @@ public class AzureStorageRepository implements FileStorageRepository {
                 .setReadPermission(readPermission);
 
         return new BlobServiceSasSignatureValues(expiryTime, blobSasPermission)
-                .setStartTime(OffsetDateTime.now().minusSeconds(10));
+                .setStartTime(OffsetDateTime.now().minusMinutes(15));
     }
 
     private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {
