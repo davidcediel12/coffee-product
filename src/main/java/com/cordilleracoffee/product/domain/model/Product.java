@@ -24,7 +24,7 @@ public class Product {
         this.name = builder.name;
         this.description = builder.description;
         this.sku = builder.sku;
-        this.stock = builder.stock != null ? builder.stock : new Stock(0L);
+        this.stock = builder.stock;
         this.status = builder.status;
         this.categoryId = builder.categoryId;
         this.basePrice = builder.basePrice;
@@ -40,6 +40,10 @@ public class Product {
 
         if (this.basePrice != null && this.variants != null && !this.variants.isEmpty()) {
             throw new IllegalArgumentException("Product cannot have base price and variants");
+        }
+
+        if (this.stock != null && this.variants != null && !this.variants.isEmpty()) {
+            throw new IllegalArgumentException("Product cannot have stock price and variants at the same time");
         }
 
         if (this.basePrice == null && (this.variants == null || this.variants.isEmpty())) {
