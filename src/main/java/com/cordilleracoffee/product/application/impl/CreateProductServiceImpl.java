@@ -161,10 +161,15 @@ public class CreateProductServiceImpl implements CreateProductService {
         if (productRequest.basePrice() != null) {
             productBasePrice = new Money(productRequest.basePrice().amount(), productRequest.basePrice().currency());
         }
+
+        Stock productStock = null;
+        if(productRequest.stock() != null) {
+            productStock = new Stock(Long.valueOf(productRequest.stock()));
+        }
         return new CreateProduct(
                 createProductCommand.userId(), productRequest.name(),
                 productRequest.description(), productRequest.category().id(),
-                new Sku(productRequest.sku()), new Stock(Long.valueOf(productRequest.stock())),
+                new Sku(productRequest.sku()), productStock,
                 productRequest.status(),
                 productBasePrice,
                 images, variants, tagIds
