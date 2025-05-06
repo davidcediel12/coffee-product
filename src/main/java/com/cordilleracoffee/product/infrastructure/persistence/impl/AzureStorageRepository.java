@@ -63,7 +63,7 @@ public class AzureStorageRepository implements FileStorageRepository {
                 .setReadPermission(readPermission);
 
         return new BlobServiceSasSignatureValues(expiryTime, blobSasPermission)
-                .setStartTime(OffsetDateTime.now());
+                .setStartTime(OffsetDateTime.now().minusSeconds(10));
     }
 
     private void validateInputParameters(String folder, String fileName, Integer expirationMinutes) {
