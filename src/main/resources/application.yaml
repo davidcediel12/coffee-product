@@ -20,6 +20,8 @@ spring:
       ddl-auto: update
     properties:
       format_sql: true
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
   datasource:
