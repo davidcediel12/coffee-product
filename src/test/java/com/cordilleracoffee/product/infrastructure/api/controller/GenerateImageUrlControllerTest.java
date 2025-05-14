@@ -1,7 +1,7 @@
 package com.cordilleracoffee.product.infrastructure.api.controller;
 
 
-import com.cordilleracoffee.product.CreateProductService;
+import com.cordilleracoffee.product.application.CreateProductService;
 import com.cordilleracoffee.product.application.UploadImageService;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequest;
 import com.cordilleracoffee.product.infrastructure.dto.generateurl.ImageUrlRequests;

@@ -1,6 +1,6 @@
 package com.cordilleracoffee.product.application.impl;
 
-import com.cordilleracoffee.product.CreateProductService;
+import com.cordilleracoffee.product.application.CreateProductService;
 import com.cordilleracoffee.product.application.FileStorageRepository;
 import com.cordilleracoffee.product.application.annotation.UseCase;
 import com.cordilleracoffee.product.application.command.CreateProductCommand;
