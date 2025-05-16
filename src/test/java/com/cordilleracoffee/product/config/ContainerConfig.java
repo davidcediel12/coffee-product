@@ -1,11 +1,13 @@
 package com.cordilleracoffee.product.config;
 
 import com.redis.testcontainers.RedisContainer;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public abstract class ContainerConfig {
@@ -25,6 +27,11 @@ public abstract class ContainerConfig {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:16-alpine"
     ).withReuse(true);
+
+
+    @Container
+    @ServiceConnection
+    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"));
 
     @DynamicPropertySource
     static void setAzureStorageProperties(DynamicPropertyRegistry registry) {
