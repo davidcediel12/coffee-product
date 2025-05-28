@@ -15,6 +15,9 @@ public class Category {
     @Column(nullable = false)
     private String description;
 
+    @ManyToOne
+    private Category parentCategory;
+
 
     public Long getId() {
         return id;
@@ -38,5 +41,13 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Category getParentCategory() {
+        return parentCategory;
+    }
+
+    public void setParentCategory(Category parentCategory) {
+        this.parentCategory = parentCategory;
     }
 }
