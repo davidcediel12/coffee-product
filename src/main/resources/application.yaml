@@ -29,7 +29,7 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
   kafka:
-    bootstrap-servers: ${EVENTHUB_NAMESPACE}.servicebus.windows.net:9093
+    bootstrap-servers: ${KAFKA_SERVER}
     properties:
       security.protocol: SASL_SSL
       sasl.mechanism: PLAIN
