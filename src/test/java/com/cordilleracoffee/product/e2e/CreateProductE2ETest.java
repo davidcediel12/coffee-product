@@ -35,6 +35,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -92,6 +93,33 @@ class CreateProductE2ETest extends ContainerConfig {
         containerClient.listBlobs()
                 .forEach(blobItem -> containerClient.getBlobClient(blobItem.getName()).delete());
     }
+
+
+    @Test
+    void shouldReturnErrorWhenCategoryNotExists() {
+
+        Map<String, Object> productMap = TestDataFactory.validCreateProductRequestMap();
+
+        ((Map<String, String>) productMap.get("category")).put("id", "100");
+
+        var productRequest = objectMapper.convertValue(productMap, CreateProductRequest.class);
+
+
+        var response = postProductError(productRequest, SELLER_ROLE, "user-123");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        ApiErrorResponse errorResponse = response.getBody();
+
+        assertThat(errorResponse)
+                .isNotNull()
+                .isInstanceOf(ApiErrorResponse.class);
+
+        assertThat(errorResponse.error()).isEqualTo("PRD-VA-05");
+        assertThat(errorResponse.message()).contains("Category and tag must exists to create the product");
+    }
+
+
 
     @Test
     void shouldReturnErrorWhenProductImageIsNotInCache() {

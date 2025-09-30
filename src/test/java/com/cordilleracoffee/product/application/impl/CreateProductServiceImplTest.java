@@ -123,4 +123,45 @@ class CreateProductServiceImplTest {
     }
 
 
+    @Test
+    void shouldReturnErrorWhenCategoryNotExist() {
+
+        doNothing().when(productService).validateProduct(anyString(), anyString(), anyString());
+
+        when(tagRepository.existsAll(any())).thenReturn(true);
+        when(categoryRepository.exists(anyLong())).thenReturn(false);
+
+
+        CreateProductCommand createProductCommand = new CreateProductCommand(TestDataFactory.validCreateProductRequest(),
+                "user-123", List.of(UserRole.SELLER));
+
+        assertThrows(InvalidProductException.class, () -> createProductService.createProduct(
+                createProductCommand
+        ));
+
+        verifyNoInteractions(productRepository);
+        verifyNoInteractions(fileStorageRepository);
+    }
+
+
+    @Test
+    void shouldReturnErrorWhenTagNotExist() {
+
+        doNothing().when(productService).validateProduct(anyString(), anyString(), anyString());
+
+        when(tagRepository.existsAll(any())).thenReturn(false);
+
+
+        CreateProductCommand createProductCommand = new CreateProductCommand(TestDataFactory.validCreateProductRequest(),
+                "user-123", List.of(UserRole.SELLER));
+
+        assertThrows(InvalidProductException.class, () -> createProductService.createProduct(
+                createProductCommand
+        ));
+
+        verifyNoInteractions(productRepository);
+        verifyNoInteractions(fileStorageRepository);
+    }
+
+
 }
