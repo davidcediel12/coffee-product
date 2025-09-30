@@ -31,7 +31,7 @@ public class TestDataFactory {
                   "name": "Grinded coffee beans",
                   "description": "Grinded coffe beans in a black package with the image of the farm",
                   "category": {
-                    "id": 20
+                    "id": 1
                   },
                   "sku": "CAF-MR",
                   "stock": 55,
@@ -69,7 +69,7 @@ public class TestDataFactory {
                   ],
                   "tags": [
                     {
-                      "id": 20
+                      "id": 1
                     }
                   ]
                 }

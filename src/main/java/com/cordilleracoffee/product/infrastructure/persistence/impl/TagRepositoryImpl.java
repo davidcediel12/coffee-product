@@ -2,9 +2,11 @@ package com.cordilleracoffee.product.infrastructure.persistence.impl;
 
 import com.cordilleracoffee.product.domain.repository.TagRepository;
 import com.cordilleracoffee.product.infrastructure.persistence.TagJpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class TagRepositoryImpl implements TagRepository {
 
     private final TagJpaRepository tagJpaRepository;

@@ -6,8 +6,10 @@ import com.cordilleracoffee.product.domain.exception.InvalidProductException;
 import com.cordilleracoffee.product.domain.model.Product;
 import com.cordilleracoffee.product.domain.model.TemporalImage;
 import com.cordilleracoffee.product.domain.model.UserRole;
+import com.cordilleracoffee.product.domain.repository.CategoryRepository;
 import com.cordilleracoffee.product.domain.repository.ImageRepository;
 import com.cordilleracoffee.product.domain.repository.ProductRepository;
+import com.cordilleracoffee.product.domain.repository.TagRepository;
 import com.cordilleracoffee.product.domain.services.ProductService;
 import com.cordilleracoffee.product.infrastructure.dto.saveproduct.CreateProductRequest;
 import com.cordilleracoffee.product.infrastructure.messaging.MessageService;
@@ -40,6 +42,13 @@ class CreateProductServiceImplTest {
     MessageService messageService;
 
     @Mock
+    TagRepository tagRepository;
+
+
+    @Mock
+    CategoryRepository categoryRepository;
+
+    @Mock
     FileStorageRepository fileStorageRepository;
 
     @Mock
@@ -54,6 +63,10 @@ class CreateProductServiceImplTest {
 
 
         doNothing().when(productService).validateProduct(anyString(), anyString(), anyString());
+
+        when(categoryRepository.exists(anyLong())).thenReturn(true);
+        when(tagRepository.existsAll(any())).thenReturn(true);
+
         when(imageRepository.getTemporalImages(anyString())).thenReturn(Map.of(
                 "b08ee4b0-22bb-446c-bd33-0343a77e9b11", new TemporalImage("b08ee4b0-22bb-446c-bd33-0343a77e9b11",
                         "other", "url", "user-123"),
@@ -86,6 +99,11 @@ class CreateProductServiceImplTest {
 
     @Test
     void shouldReturnErrorWhenImagesNotExist() {
+
+        doNothing().when(productService).validateProduct(anyString(), anyString(), anyString());
+
+        when(categoryRepository.exists(anyLong())).thenReturn(true);
+        when(tagRepository.existsAll(any())).thenReturn(true);
 
         CreateProductCommand createProductCommand = new CreateProductCommand(TestDataFactory.validCreateProductRequest(),
                 "user-123", List.of(UserRole.SELLER));
