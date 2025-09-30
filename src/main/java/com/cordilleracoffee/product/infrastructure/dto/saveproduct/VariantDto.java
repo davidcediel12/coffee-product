@@ -19,5 +19,5 @@ public record VariantDto(@NotBlank String name,
                          @NotNull Boolean isPrimary,
 
                          @NotBlank String sku,
-                         @NotEmpty @NotNull List<ImageDto> images) {
+                         @NotEmpty @Valid List<ImageDto> images) {
 }
